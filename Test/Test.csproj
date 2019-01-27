@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CsGenerator2\CsGenerator2.csproj" />
     <ProjectReference Include="..\CsGenerator\CsGenerator.csproj" />
   </ItemGroup>
 

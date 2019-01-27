@@ -5,6 +5,7 @@ using CsGenerator.Expression;
 using CsGenerator.Expression.Operator;
 using CsGenerator.Statement;
 using CsGenerator.Statement.Loop;
+using CsGenerator2;
 using NUnit.Framework;
 
 //using NUnit.Framework;
@@ -240,6 +241,12 @@ namespace Test
 
             var expected = "using System;namespace NinetyNineBottlesOfBeer{public class NinetyNineBottlesOfBeerSong{string BEER_LYRICS_MORE = @\"\r\n{0} bottle{1} of beer on the wall,\r\n{0} bottle{1} of beer.\r\nTake one down, pass it around,\r\n{2} bottle{3} of beer on the wall.\";string BEER_LYRICS_NONE = @\"\r\n{0} bottle{1} of beer on the wall,\r\n{0} bottle{1} of beer.\r\nTake one down, pass it around,\r\nNo more bottles of beer on the wall.\";public string Sing(int count){string tmp = \"\"; if(count==1){return string.Format(BEER_LYRICS_MORE,count,count==1?\"\":\"s\");} if(count>0){return string.Format(BEER_LYRICS_NONE,count,count==1?\"\":\"s\",count-1,count-1==1?\"\":\"s\");} tmp=\"\"; return tmp;}public void Main(){NinetyNineBottlesOfBeerSong song = new NinetyNineBottlesOfBeerSong(); for(int i = 99;i<0;i++){Console.WriteLine(song.Sing(i));}}}}";
             Assert.AreEqual(expected,nameSpace.ToString());
+        }
+
+        [Test]
+        public void Test_RoslynCodeEditor()
+        {
+            new RoslynCodeEditor().Gen();
         }
     }
 }
