@@ -47,7 +47,7 @@ namespace CsGenerator2
             return SyntaxFactory.ParseSyntaxTree(stringText, options, filename);
         }
 
-        public void Gen()
+        public SyntaxTree Gen()
         {
             var source = "// A Hello World! program in C#.\r\nusing System;\r\nnamespace HelloWorld\r\n{\r\n    class Hello \r\n    {\r\n        static void Main() \r\n        {\r\n            Console.WriteLine(\"Hello World!\");\r\n\r\n            // Keep the console window open in debug mode.\r\n            Console.WriteLine(\"Press any key to exit.\");\r\n            Console.ReadKey();\r\n        }\r\n    }\r\n}";
             //var helloWorld = SyntaxFactory.ParseSyntaxTree(source);
@@ -77,6 +77,8 @@ namespace CsGenerator2
                     throw new Exception(string.Join("\n", emitResult.Diagnostics));
                 }
             }
+
+            return helloWorld;
             // helloWorldStringLiteral.Update(new SyntaxToken());
             //SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression);
             //SyntaxFactory.ParseExpression("\"hello\"")//var 
