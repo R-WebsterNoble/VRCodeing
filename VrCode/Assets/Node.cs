@@ -7,7 +7,7 @@ namespace Assets
 {
     public abstract class Node : MonoBehaviour
     {
-        public int Height = 1;
+        public virtual int Height { get; set; } = 1;
         public SyntaxNode SyntaxNode { get; set; }
         public Transform Parent { get; set; }
         public List<Node> Children { get; set; } = new List<Node>();
@@ -16,38 +16,40 @@ namespace Assets
         public Vector3 screenPoint;
         public Vector3 offset;
 
+        public virtual string DisplayString => SyntaxNode.GetType().ToString()
+            .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "")
+            .Replace("Syntax", "");
+
         public virtual void AttachChildren(IEnumerable<SyntaxNode> nodes)
         {
             foreach (var childNode in nodes)
             {
-                var newChildNode = CreateNode(childNode);
+                var newChildNode = CreateTree(childNode);
                 Height += newChildNode.Height;
                 Children.Add(newChildNode);
             }
         }
 
-        public virtual Node CreateNode(SyntaxNode node)
+        public virtual Node CreateTree(SyntaxNode node)
         {
-            var nodeText = node.GetType().ToString()
-                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "")
-                .Replace("Syntax", "");
-
-            var newNode = new GameObject(nodeText);
+            var newNode = new GameObject();
             var type = SyntaxNodeLookup.LookupType(node);
             var nodeScript = (Node)newNode.AddComponent(type);
+
             nodeScript.SyntaxNode = node;
             nodeScript.Parent = transform;
-            //_nodes[node] = newNode;
+
+            var displayName = nodeScript.DisplayString;
+            newNode.name = nodeScript.GetType().ToString().Replace("Assets.SyntaxNodes.", "");
 
             newNode.transform.parent = transform;
             newNode.transform.localPosition = new Vector3(1, Height  * - 2, 0);
 
             var text = newNode.AddComponent<TextMesh>();
-            text.text = nodeText;
+            text.text = displayName;
             var box = newNode.AddComponent<BoxCollider>();
 
             var textBounds = text.GetComponent<Renderer>().bounds;
-            //box.center = textBounds.center;
             box.size = textBounds.size;
 
             var line = newNode.AddComponent<LineRenderer>();
@@ -56,7 +58,7 @@ namespace Assets
             line.endColor = Color.grey;
             line.startWidth = 0.1f;
             line.endWidth = 0.1f;
-            line.SetPositions(new[] { newNode.transform.position, transform.position });
+            line.SetPositions(new[] { newNode.transform.position, transform.position + new Vector3(-0.25f, 0f, 0f) });
             nodeScript.Line = line;
 
             nodeScript.AttachChildren(node.ChildNodes());
@@ -70,6 +72,8 @@ namespace Assets
 
             offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
 
+            var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
+            root.SelectedNode = this;
         }
 
         void OnMouseDrag()
@@ -91,5 +95,13 @@ namespace Assets
                 child.UpdateLine();
             }
         }
+
+        //private void DeleteTree()
+        //{
+        //    foreach (var child in Children)
+        //    {
+        //        DeleteTree();
+        //    }
+        //}
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.SyntaxNodes;
 using JetBrains.Annotations;
@@ -11,14 +12,29 @@ namespace Assets
 {
     public class RootNode : Node
     {
+        public Node SelectedNode;
+
+        private SyntaxNode _rootNode;
         //private Dictionary<SyntaxNode, GameObject> _nodes = new Dictionary<SyntaxNode, GameObject>();
 
+        void Update()
+        {
+            if (SelectedNode == null)
+                return;
+
+            if (Input.GetKeyUp(KeyCode.Delete))
+            {
+                _rootNode = _rootNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+                Destroy(Children.First().gameObject);
+                Children = new List<Node>(new[] {CreateTree(_rootNode)});
+            }
+        }
 
         // Start is called before the first frame update
         void Start()
         {
-            var helloWorld = new CodeEditor().Gen().GetRoot();
-            CreateNode(helloWorld);
+            _rootNode = new CodeEditor().Gen().GetRoot();
+            Children.Add(CreateTree(_rootNode));
             //InstantiateNode(gameObject.transform, helloWorld.GetRoot());
 
             //var memberAccessNode = (MemberAccessExpressionSyntax)helloWorld.GetRoot().ChildNodes().ElementAt(1)
@@ -30,11 +46,6 @@ namespace Assets
 
             //var syntaxNodeParent = ga.GetComponent<Node>().SyntaxNode.Parent;
             //_nodes.TryGetValue(syntaxNodeParent, out var ga2);
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
     }
 }
