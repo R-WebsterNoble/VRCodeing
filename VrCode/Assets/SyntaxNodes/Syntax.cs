@@ -1,4 +1,6 @@
-﻿namespace Assets.SyntaxNodes
+﻿using System;
+
+namespace Assets.SyntaxNodes
 {
     public class CSharpSyntaxNode : Node
     {
@@ -158,10 +160,12 @@
 
     public class ElseClauseSyntax : CSharpSyntaxNode
     {
+        public override string DisplayString => "else";
     }
 
     public class EqualsValueClauseSyntax : CSharpSyntaxNode
     {
+        public override string DisplayString => "=";
     }
 
     public class ExplicitInterfaceSpecifierSyntax : CSharpSyntaxNode
@@ -286,6 +290,8 @@
 
     public class LiteralExpressionSyntax : ExpressionSyntax
     {
+        public override string DisplayString =>
+            ((Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax)SyntaxNode).Token.ToString().Replace("\n", "");
     }
 
     public class MakeRefExpressionSyntax : ExpressionSyntax
@@ -302,6 +308,7 @@
 
     public class ObjectCreationExpressionSyntax : ExpressionSyntax
     {
+        public override string DisplayString => "new";
     }
 
     public class OmittedArraySizeExpressionSyntax : ExpressionSyntax
@@ -394,6 +401,8 @@
 
     public class IdentifierNameSyntax : SimpleNameSyntax
     {
+        public override string DisplayString =>
+            ((Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax)SyntaxNode).Identifier.ValueText;
     }
 
     public class NullableTypeSyntax : TypeSyntax
@@ -410,6 +419,8 @@
 
     public class PredefinedTypeSyntax : TypeSyntax
     {
+        public override string DisplayString =>
+            ((Microsoft.CodeAnalysis.CSharp.Syntax.PredefinedTypeSyntax)SyntaxNode).Keyword.ValueText;
     }
 
     public class RefTypeSyntax : TypeSyntax
@@ -458,6 +469,8 @@
 
     public class BaseFieldDeclarationSyntax : MemberDeclarationSyntax
     {
+        public override int Height { get; set; } = 0;
+        public override string DisplayString => "";
     }
 
     public class EventFieldDeclarationSyntax : BaseFieldDeclarationSyntax
@@ -550,6 +563,8 @@
 
     public class NamespaceDeclarationSyntax : MemberDeclarationSyntax
     {
+
+        public override string DisplayString => "namespace";
     }
 
     public class NameColonSyntax : CSharpSyntaxNode
@@ -694,6 +709,8 @@
 
     public class ForStatementSyntax : StatementSyntax
     {
+
+        public override string DisplayString => "for";
     }
 
     public class GotoStatementSyntax : StatementSyntax
@@ -710,6 +727,8 @@
 
     public class LocalDeclarationStatementSyntax : StatementSyntax
     {
+        public override string DisplayString => "";
+        public override int Height { get; set; } = 0;
     }
 
     public class LocalFunctionStatementSyntax : StatementSyntax
@@ -722,6 +741,8 @@
 
     public class ReturnStatementSyntax : StatementSyntax
     {
+
+        public override string DisplayString => "return";
     }
 
     public class SwitchStatementSyntax : StatementSyntax
@@ -914,14 +935,19 @@
 
     public class UsingDirectiveSyntax : CSharpSyntaxNode
     {
+        public override string DisplayString => "using";
     }
 
     public class VariableDeclarationSyntax : CSharpSyntaxNode
     {
+        public override string DisplayString =>
+            ((Microsoft.CodeAnalysis.CSharp.Syntax.VariableDeclarationSyntax) SyntaxNode).Variables.FirstOrDefault().Identifier.Text;
     }
 
     public class VariableDeclaratorSyntax : CSharpSyntaxNode
     {
+        public override int Height { get; set; } = 0;
+        public override string DisplayString => "";
     }
 
     public class VariableDesignationSyntax : CSharpSyntaxNode
