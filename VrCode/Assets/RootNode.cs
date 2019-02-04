@@ -1,51 +1,57 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Assets.SyntaxNodes;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using UnityEngine;
 
-namespace Assets
+public class RootNode : Node
 {
-    public class RootNode : Node
+    public Node SelectedNode;
+
+    //private Dictionary<SyntaxNode, GameObject> _nodes = new Dictionary<SyntaxNode, GameObject>();
+
+    void Update()
     {
-        public Node SelectedNode;
+        if (SelectedNode == null)
+            return;
 
-        private SyntaxNode _rootNode;
-        //private Dictionary<SyntaxNode, GameObject> _nodes = new Dictionary<SyntaxNode, GameObject>();
-
-        void Update()
+        if (Input.GetKeyUp(KeyCode.Delete))
         {
-            if (SelectedNode == null)
-                return;
-
-            if (Input.GetKeyUp(KeyCode.Delete))
-            {
-                _rootNode = _rootNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
-                Destroy(Children.First().gameObject);
-                Children = new List<Node>(new[] {CreateTree(_rootNode)});
-            }
+            var newRootNode = SyntaxNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+            RebuildTree(newRootNode);
         }
+    }
 
-        // Start is called before the first frame update
-        void Start()
+    public void RebuildTree(SyntaxNode newRootNode)
+    {
+        SyntaxNode = newRootNode;
+        Destroy(Children.First().gameObject);
+
+        var newTree = new[]
         {
-            _rootNode = new CodeEditor().Gen().GetRoot();
-            Children.Add(CreateTree(_rootNode));
-            //InstantiateNode(gameObject.transform, helloWorld.GetRoot());
+            CreateTree(SyntaxNode)
+        };
 
-            //var memberAccessNode = (MemberAccessExpressionSyntax)helloWorld.GetRoot().ChildNodes().ElementAt(1)
-            //    .ChildNodes().ElementAt(1).ChildNodes().First().ChildNodes().ElementAt(2).ChildNodes().First()
-            //    .ChildNodes().First().ChildNodes().First();
+        Children = new List<Node>(newTree);
+    }
 
-            //var node = _nodes[memberAccessNode].;
-            //_nodes.TryGetValue(node.Parent, out var ga);
+    // Start is called before the first frame update
+        
+    [UsedImplicitly]
+    void Start()
+    {
+        SyntaxNode = new CodeEditor().Gen().GetRoot();
+        Children.Add(CreateTree(SyntaxNode));
+        //InstantiateNode(gameObject.transform, helloWorld.GetRoot());
 
-            //var syntaxNodeParent = ga.GetComponent<Node>().SyntaxNode.Parent;
-            //_nodes.TryGetValue(syntaxNodeParent, out var ga2);
-        }
+        //var memberAccessNode = (MemberAccessExpressionSyntax)helloWorld.GetRoot().ChildNodes().ElementAt(1)
+        //    .ChildNodes().ElementAt(1).ChildNodes().First().ChildNodes().ElementAt(2).ChildNodes().First()
+        //    .ChildNodes().First().ChildNodes().First();
+
+        //var node = _nodes[memberAccessNode].;
+        //_nodes.TryGetValue(node.Parent, out var ga);
+
+        //var syntaxNodeParent = ga.GetComponent<Node>().SyntaxNode.Parent;
+        //_nodes.TryGetValue(syntaxNodeParent, out var ga2);
     }
 }

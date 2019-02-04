@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 public class CodeEditor
@@ -54,7 +53,7 @@ public class CodeEditor
 
 
         var compilation = CSharpCompilation.Create("Test.dll", new[] { helloWorld }, DefaultReferences, DefaultCompilationOptions);
-
+        
         ////LiteralExpressionSyntax helloWorldStringLiteral = (LiteralExpressionSyntax) helloWorld.GetRoot().ChildNodes().ElementAt(1).ChildNodes().ElementAt(1).ChildNodes().First().ChildNodes().ElementAt(2).ChildNodes().First().ChildNodes().First().ChildNodes().ElementAt(1).ChildNodes().First().ChildNodes().First();
         //var memberAccessNode = (MemberAccessExpressionSyntax)helloWorld.GetRoot().ChildNodes().ElementAt(1)
         //    .ChildNodes().ElementAt(1).ChildNodes().First().ChildNodes().ElementAt(2).ChildNodes().First()
@@ -64,17 +63,16 @@ public class CodeEditor
 
         //var updatedHelloWorld = helloWorld.GetRoot().ReplaceNode(memberAccessNode, updated).SyntaxTree;
 
-        //var compilation = CSharpCompilation.Create("Test.dll", new[] { updatedHelloWorld }, DefaultReferences, DefaultCompilationOptions);
-
-        //compilation = UpdateCompilation(compilation, memberAccessNode, updated);
+        //compilation = CSharpCompilation.Create("Test.dll", new[] { updatedHelloWorld }, DefaultReferences, DefaultCompilationOptions);
+    
         using (var ms = new MemoryStream())
         {
             var emitResult = compilation.Emit(ms);
             if (!emitResult.Success)
             {
                 var errorNodes = emitResult.Diagnostics.Select(FindErrorNode);
-                //var sourceTree = diagnostic.Location.SourceTree.GetLocation(diagnostic.Location.SourceSpan);
-                throw new Exception(string.Join("\n", emitResult.Diagnostics));
+                var errorString = $"{emitResult.Diagnostics}\n\n{string.Join(",", errorNodes)}";
+                throw new Exception(string.Join("\n", errorString));
             }
         }
 
@@ -125,31 +123,5 @@ public class CodeEditor
             }
         }
         return null;
-    }
-
-    private CSharpCompilation UpdateCompilation(CSharpCompilation compilation, SyntaxNode original, SyntaxNode updated)
-    {
-        if (original.ToString() == updated.ToString())
-            return compilation;
-
-
-        var aStringBuilder = new StringBuilder(original.SyntaxTree.ToString());
-        var nodeTextPosition = original.FullSpan.Start;
-        aStringBuilder.Remove(nodeTextPosition, original.FullSpan.Length);
-        aStringBuilder.Insert(nodeTextPosition, updated.ToString());
-
-        SyntaxTree newSyntaxTree = Parse(aStringBuilder.ToString());
-
-        var newSyntaxTrees = compilation.SyntaxTrees.Replace(original.SyntaxTree, newSyntaxTree);
-
-        return compilation.RemoveAllSyntaxTrees().AddSyntaxTrees(newSyntaxTrees);
-
-        //foreach (var parent in original)
-        //{
-        //    while (true)
-        //    {
-        //        break;
-        //    }
-        //}
     }
 }

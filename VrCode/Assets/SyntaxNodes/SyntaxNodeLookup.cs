@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
 
-namespace Assets.SyntaxNodes
+namespace SyntaxNodes
 {
     public static class SyntaxNodeLookup
     {
@@ -654,8 +654,7 @@ namespace Assets.SyntaxNodes
                 case "Microsoft.CodeAnalysis.CSharp.Syntax.SwitchLabelSyntax":
                     return typeof(SwitchLabelSyntax);
 
-                case "Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax"
-                    :
+                case "Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax":
                     return typeof(CasePatternSwitchLabelSyntax);
 
                 case "Microsoft.CodeAnalysis.CSharp.Syntax.CaseSwitchLabelSyntax":

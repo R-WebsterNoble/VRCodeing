@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using UnityEngine;
 
-namespace Assets.SyntaxNodes
+namespace SyntaxNodes
 {
     public class CSharpSyntaxNode : Node
     {
@@ -300,6 +302,25 @@ namespace Assets.SyntaxNodes
 
     public class MemberAccessExpressionSyntax : ExpressionSyntax
     {
+        internal override void OnMouseDown()
+        {
+            base.OnMouseDown();
+
+            if (!Input.GetKey("r"))
+                return;
+
+            var rootNode = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
+
+
+            var identifier = SyntaxFactory.IdentifierName("Write");
+
+            var newNode = ((Microsoft.CodeAnalysis.CSharp.Syntax.MemberAccessExpressionSyntax)SyntaxNode)
+                .WithName(identifier);
+
+            var newTree = rootNode.SyntaxNode.ReplaceNode(SyntaxNode, newNode);
+
+            rootNode.RebuildTree(newTree);
+        }
     }
 
     public class MemberBindingExpressionSyntax : ExpressionSyntax
