@@ -248,5 +248,11 @@ namespace Test
         {
             new RoslynCodeEditor().Gen();
         }
+
+        [Test]
+        public void Test_Voice()
+        {
+            QuickStart.DoVoice();
+        }
     }
 }
