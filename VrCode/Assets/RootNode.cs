@@ -10,6 +10,7 @@ public class RootNode : Node
 
     //private Dictionary<SyntaxNode, GameObject> _nodes = new Dictionary<SyntaxNode, GameObject>();
 
+    [UsedImplicitly]
     void Update()
     {
         if (SelectedNode == null)
