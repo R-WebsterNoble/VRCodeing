@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using SyntaxNodes;
@@ -11,9 +12,10 @@ public abstract class Node : MonoBehaviour
     public Transform Parent { get; set; }
     public List<Node> Children { get; set; } = new List<Node>();
     public LineRenderer Line { get; set; }
+    public Node RootNode { get; set; }
 
-    public Vector3 screenPoint;
-    public Vector3 offset;
+    public Vector3 ScreenPoint;
+    public Vector3 Offset;
 
     public virtual string DisplayString => SyntaxNode.GetType().ToString()
         .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "")
@@ -23,33 +25,20 @@ public abstract class Node : MonoBehaviour
     {
         foreach (var childNode in nodes)
         {
-            var newChildNode = CreateTree(childNode);
+            var newChildNode = CreateTree(childNode, RootNode);
             Height += newChildNode.Height;
             Children.Add(newChildNode);
         }
     }
 
-    public virtual Node CreateTree(SyntaxNode node)
+    public virtual Node CreateTree(SyntaxNode node, Node rootNode)
     {
-        var newNode = new GameObject();
-        var type = SyntaxNodeLookup.LookupType(node);
-        var nodeScript = (Node)newNode.AddComponent(type);
+        var nodeScript = InstantiateSyntaxNode(node, rootNode);
+        var newNode = nodeScript.gameObject;
 
-        nodeScript.SyntaxNode = node;
         nodeScript.Parent = transform;
-
-        var displayName = nodeScript.DisplayString;
-        newNode.name = nodeScript.GetType().ToString().Replace("Assets.SyntaxNodes.", "");
-
         newNode.transform.parent = transform;
         newNode.transform.localPosition = new Vector3(1, Height  * - 2, 0);
-
-        var text = newNode.AddComponent<TextMesh>();
-        text.text = displayName;
-        var box = newNode.AddComponent<BoxCollider>();
-
-        var textBounds = text.GetComponent<Renderer>().bounds;
-        box.size = textBounds.size;
 
         var line = newNode.AddComponent<LineRenderer>();
         line.material = new Material(Shader.Find("Unlit/Texture"));
@@ -65,11 +54,33 @@ public abstract class Node : MonoBehaviour
         return nodeScript;
     }
 
+    public static Node InstantiateSyntaxNode(SyntaxNode node, [CanBeNull] Node rootNode)
+    {
+        var newNode = new GameObject();
+        var type = SyntaxNodeLookup.LookupType(node);
+        var nodeScript = (Node) newNode.AddComponent(type);
+
+        nodeScript.RootNode = rootNode?? nodeScript;
+
+        nodeScript.SyntaxNode = node;
+
+        var displayName = nodeScript.DisplayString;
+        newNode.name = nodeScript.GetType().ToString().Replace("Assets.SyntaxNodes.", "");
+
+        var text = newNode.AddComponent<TextMesh>();
+        text.text = displayName;
+        var box = newNode.AddComponent<BoxCollider>();
+
+        var textBounds = text.GetComponent<Renderer>().bounds;
+        box.size = textBounds.size;
+        return nodeScript;
+    }
+
     internal virtual void OnMouseDown()
     {
-        screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+        ScreenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 
-        offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+        Offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z));
 
         var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
         root.SelectedNode = this;
@@ -78,9 +89,9 @@ public abstract class Node : MonoBehaviour
     [UsedImplicitly]
     void OnMouseDrag()
     {
-        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z);
 
-        Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
+        Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + Offset;
 
         transform.position = curPosition;
 
@@ -89,11 +100,35 @@ public abstract class Node : MonoBehaviour
 
     public void UpdateLine()
     {
-        Line.SetPositions(new[] { transform.position, Parent.position });
+        if (Line != null)
+            Line.SetPositions(new[] {transform.position, Parent.position});
+
         foreach (var child in Children)
         {
             child.UpdateLine();
         }
+    }
+
+    public void ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode)
+    {
+        if(RootNode != this)
+            throw new Exception("Only call ReplaceNode on Root Node");
+        var newTreeRoot = SyntaxNode.ReplaceNode(oldNode, newNode);
+        RebuildTree(newTreeRoot);
+    }
+
+    public void RebuildTree(SyntaxNode newRootNode)
+    {
+        SyntaxNode = newRootNode;
+        foreach (var child in Children)
+        {
+            if(child != null && child.gameObject != null)
+                Destroy(child.gameObject);
+        }
+
+        Height = 1;
+        Children = new List<Node>();
+        AttachChildren(newRootNode.ChildNodes());
     }
 
     //private void DeleteTree()

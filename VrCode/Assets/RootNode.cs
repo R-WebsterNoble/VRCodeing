@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using UnityEngine;
+using SyntaxNodes;
 
-public class RootNode : Node
+public class RootNode : CompilationUnitSyntax
 {
     public Node SelectedNode;
 
@@ -18,22 +18,23 @@ public class RootNode : Node
 
         if (Input.GetKeyUp(KeyCode.Delete))
         {
-            var newRootNode = SyntaxNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
-            RebuildTree(newRootNode);
+            if (SelectedNode.RootNode == SelectedNode)
+            {
+                Destroy(SelectedNode.gameObject);
+                SelectedNode = null;
+                return;
+            }
+
+            try
+            {
+                var newRootNode = SyntaxNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+                RebuildTree(newRootNode);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.Message);
+            }
         }
-    }
-
-    public void RebuildTree(SyntaxNode newRootNode)
-    {
-        SyntaxNode = newRootNode;
-        Destroy(Children.First().gameObject);
-
-        var newTree = new[]
-        {
-            CreateTree(SyntaxNode)
-        };
-
-        Children = new List<Node>(newTree);
     }
 
     // Start is called before the first frame update
@@ -41,8 +42,10 @@ public class RootNode : Node
     [UsedImplicitly]
     void Start()
     {
+        RootNode = this;
         SyntaxNode = new CodeEditor().Gen().GetRoot();
-        Children.Add(CreateTree(SyntaxNode));
+        RebuildTree(SyntaxNode);
+        //Children.Add(CreateTree(SyntaxNode, this));
         //InstantiateNode(gameObject.transform, helloWorld.GetRoot());
 
         //var memberAccessNode = (MemberAccessExpressionSyntax)helloWorld.GetRoot().ChildNodes().ElementAt(1)

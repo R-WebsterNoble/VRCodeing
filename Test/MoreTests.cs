@@ -46,7 +46,6 @@ namespace Test
 
             return bytes;//buffer;
         }
-        [TestOf(typeof(AudioData))]
         [TestCase(/*start*/0, /*end*/8, /*expectedFirstNum*/1f, /*expectedLastNum*/8f, /*expectedCount*/8, ExpectedResult = 8, TestName = "woot")]
         [TestCase(/*start*/1, /*end*/8, /*expectedFirstNum*/2f, /*expectedLastNum*/8f, /*expectedCount*/7)]
         [TestCase(/*start*/0, /*end*/0, /*expectedFirstNum*/0f, /*expectedLastNum*/0f, /*expectedCount*/0)]

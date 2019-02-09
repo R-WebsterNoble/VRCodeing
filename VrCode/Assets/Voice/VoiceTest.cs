@@ -18,7 +18,7 @@ namespace Voice
         private StreamingRecognizeRequest _streamingRecognizeRequest;
         private SpeechClient.StreamingRecognizeStream _streamingRecognize;
 
-        private VoiceRecognitionStreamer _streamer;
+        public VoiceRecognitionStreamer Streamer;
 
         private bool _recording;
         private float _lastChunk;
@@ -69,30 +69,30 @@ namespace Voice
         [UsedImplicitly]
         private void FixedUpdate()
         {
-            //var transcript = _streamer?.LatestResults?.FirstOrDefault()?.Alternatives?.FirstOrDefault()?.Transcript;
+            var transcript = Streamer?.LatestResults?.FirstOrDefault()?.Alternatives?.FirstOrDefault()?.Transcript;
 
-            //if (!string.IsNullOrEmpty(transcript))
-            //    _text.text = transcript;
+            if (!string.IsNullOrEmpty(transcript))
+                _text.text = transcript;
 
-            if (_streamer?.LatestResults != null)
-            {
-                var text = "";
-                for (var i = 0; i < _streamer.LatestResults.Count; i++)
-                {
-                    var result = _streamer.LatestResults[i];
-                    foreach (var alt in result.Alternatives)
-                    {
-                        text += $"Result: {i}, Stability: {result.Stability}, Confidence: {alt.Confidence} Final: {result.IsFinal}: \"{alt.Transcript}\"\n";
-                    }
-                }
-                _text.text = text;
-            }
+            //if (Streamer?.LatestResults != null)
+            //{
+            //    var text = "";
+            //    for (var i = 0; i < Streamer.LatestResults.Count; i++)
+            //    {
+            //        var result = Streamer.LatestResults[i];
+            //        foreach (var alt in result.Alternatives)
+            //        {
+            //            text += $"Result: {i}, Stability: {result.Stability}, Confidence: {alt.Confidence} Final: {result.IsFinal}: \"{alt.Transcript}\"\n";
+            //        }
+            //    }
+            //    _text.text = text;
+            //}
 
             if (Input.GetKeyDown("space"))
             {
                 StartVoice();
             }
-            else if (_recording && (!Input.GetKey("space") || (_streamer?.LatestResults?.Any(r => r.IsFinal) ?? false)))
+            else if (_recording && (!Input.GetKey("space") || (Streamer?.LatestResults?.Any(r => r.IsFinal) ?? false)))
             {
                 EndVoice();
             }
@@ -116,7 +116,7 @@ namespace Voice
             _lastVoicePos = 0;
             _lastChunk = Time.fixedUnscaledTime;
             
-            _streamer = new VoiceRecognitionStreamer(_speechClient, _streamingRecognizeRequest);
+            Streamer = new VoiceRecognitionStreamer(_speechClient, _streamingRecognizeRequest);
         }
 
         private void EndVoice()
@@ -127,7 +127,7 @@ namespace Voice
 
             SendVoiceChunk();
 
-            _streamer.EndVoiceRecognition();
+            Streamer.EndVoiceRecognition();
 
             Microphone.End(null);
         }
@@ -141,7 +141,7 @@ namespace Voice
 
             var audioData = new AudioData(_audioSource.clip, _lastVoicePos, pos);
 
-            _streamer.RecognizeChunk(audioData);
+            Streamer.RecognizeChunk(audioData);
 
             _lastVoicePos = pos;
         }

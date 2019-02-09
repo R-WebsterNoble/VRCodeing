@@ -1,6 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using UnityEngine;
+using UnityEngine; 
+
+using Ros = Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SyntaxNodes
 {
@@ -118,6 +120,50 @@ namespace SyntaxNodes
 
     public class CompilationUnitSyntax : CSharpSyntaxNode
     {
+        public void Awake()
+        {
+            GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
+            textObject.transform.parent = transform;
+            textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
+        }
+
+        private void SetName()
+        {
+            Debug.Log("clicked");
+
+            var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
+
+            if (root.SelectedNode == null)
+            {
+                Debug.Log("nothing selected");
+                return;
+            }
+
+            if (root.SelectedNode.SyntaxNode is Ros.UsingDirectiveSyntax selectedUsing)
+            {
+
+                var newNode = ((Ros.CompilationUnitSyntax)SyntaxNode).AddUsings(selectedUsing);
+                RootNode.ReplaceNode(SyntaxNode, newNode);
+
+                //var line = gameObject.AddComponent<LineRenderer>();
+                //line.material = new Material(Shader.Find("Unlit/Texture"));
+                //line.startColor = Color.grey;
+                //line.endColor = Color.grey;
+                //line.startWidth = 0.1f;
+                //line.endWidth = 0.1f;
+                //line.SetPositions(new[] { transform.position, transform.position + new Vector3(-0.25f, 0f, 0f) });
+
+                //Line = line;
+                if (root.SelectedNode.gameObject != null)
+                    Destroy(root.SelectedNode.gameObject);
+
+                root.SelectedNode = null;
+            }
+            else
+            {
+                Debug.Log($"Couldn't attach {root.SelectedNode.DisplayString} to {DisplayString}");
+            }
+        }
     }
 
     public class ConstructorInitializerSyntax : CSharpSyntaxNode
@@ -293,7 +339,7 @@ namespace SyntaxNodes
     public class LiteralExpressionSyntax : ExpressionSyntax
     {
         public override string DisplayString =>
-            ((Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax)SyntaxNode).Token.ToString().Replace("\n", "");
+            ((Ros.LiteralExpressionSyntax)SyntaxNode).Token.ToString().Replace("\n", "");
     }
 
     public class MakeRefExpressionSyntax : ExpressionSyntax
@@ -314,7 +360,7 @@ namespace SyntaxNodes
 
             var identifier = SyntaxFactory.IdentifierName("Write");
 
-            var newNode = ((Microsoft.CodeAnalysis.CSharp.Syntax.MemberAccessExpressionSyntax)SyntaxNode)
+            var newNode = ((Ros.MemberAccessExpressionSyntax)SyntaxNode)
                 .WithName(identifier);
 
             var newTree = rootNode.SyntaxNode.ReplaceNode(SyntaxNode, newNode);
@@ -957,6 +1003,42 @@ namespace SyntaxNodes
     public class UsingDirectiveSyntax : CSharpSyntaxNode
     {
         public override string DisplayString => "using";
+
+        public void Awake()
+        {
+            GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
+            textObject.transform.parent = transform;
+            textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
+        }
+
+        private void SetName()
+        {
+            Debug.Log("clicked");
+
+            var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
+
+            if (root.SelectedNode == null)
+            {
+                Debug.Log("nothing selected");
+                return;
+            }
+
+            if (root.SelectedNode.SyntaxNode is Ros.NameSyntax selectedName)
+            {
+
+                var newNode = ((Ros.UsingDirectiveSyntax) SyntaxNode).WithName(selectedName);
+                RootNode.ReplaceNode(SyntaxNode, newNode);
+
+                if(root.SelectedNode.gameObject != null)
+                    Destroy(root.SelectedNode.gameObject);
+
+                root.SelectedNode = null;
+            }
+            else
+            {
+                Debug.Log($"Couldn't attach {root.SelectedNode.DisplayString} to {DisplayString}");
+            }
+        }
     }
 
     public class VariableDeclarationSyntax : CSharpSyntaxNode
