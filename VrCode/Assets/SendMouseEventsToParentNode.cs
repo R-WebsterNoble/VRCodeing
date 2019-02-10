@@ -10,12 +10,7 @@ public class SendMouseEventsToParentNode : MonoBehaviour
     [UsedImplicitly]
     void Awake()
     {
-        var currentParent = gameObject;
-        do
-        {
-            currentParent = currentParent.transform.parent.gameObject;
-            Parent = currentParent.GetComponent<Node>();
-        } while (Parent == null);
+        Parent = gameObject.GetComponentInParent<Node>();
     }
 
     [UsedImplicitly]

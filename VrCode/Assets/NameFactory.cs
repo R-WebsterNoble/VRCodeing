@@ -13,6 +13,8 @@ public class NameFactory : MonoBehaviour
 
         var node = Node.InstantiateSyntaxNode(nameRosNode, null);
 
+        node.InitComponents(null);
+
         node.gameObject.transform.position = gameObject.transform.position;
         node.gameObject.transform.Translate(0,10,0);
     }

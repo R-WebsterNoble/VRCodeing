@@ -14,6 +14,8 @@ public abstract class Node : MonoBehaviour
     public LineRenderer Line { get; set; }
     public Node RootNode { get; set; }
 
+    public AttachmentPoint AttachmentPoint;
+
     public Vector3 ScreenPoint;
     public Vector3 Offset;
 
@@ -58,11 +60,14 @@ public abstract class Node : MonoBehaviour
         var textBounds = text.GetComponent<Renderer>().bounds;
         box.size = textBounds.size;
 
-        InitLine(parent);
+            InitLine(parent);
     }
 
     public virtual void InitLine(Node parent)
     {
+        if (parent == null)
+            return;
+
         var line = gameObject.AddComponent<LineRenderer>();
         line.material = new Material(Shader.Find("Unlit/Texture"));
         line.startColor = Color.grey;
@@ -83,11 +88,16 @@ public abstract class Node : MonoBehaviour
         nodeScript.RootNode = rootNode?? nodeScript;
         nodeScript.SyntaxNode = rosNode;
 
+        var rigidBody = newNode.AddComponent<Rigidbody>();
+        rigidBody.isKinematic = true;
+
         return nodeScript;
     }
 
     [UsedImplicitly]
+
     public void OnMouseDown()
+    //public void OnBeginDrag(PointerEventData eventData)
     {
         ScreenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 
@@ -99,12 +109,19 @@ public abstract class Node : MonoBehaviour
 
     [UsedImplicitly]
     public void OnMouseDrag()
+    //public void OnDrag(PointerEventData eventData)
     {
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z);
 
         Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + Offset;
 
-        transform.position = curPosition;
+        var movement = curPosition - transform.position;
+        //GetComponent<Rigidbody>().MovePosition(curPosition);
+        foreach (var rb in GetComponentsInChildren<Rigidbody>())
+        {
+            rb.MovePosition(rb.transform.position + movement);
+        }
+        //transform.position = curPosition;
 
         UpdateLine();
     }
@@ -140,6 +157,11 @@ public abstract class Node : MonoBehaviour
         Height = 1;
         Children = new List<Node>();
         AttachChildren(newRootNode.ChildNodes());
+    }
+
+    public virtual void Attach(Node other)
+    {
+
     }
 
     //private void DeleteTree()

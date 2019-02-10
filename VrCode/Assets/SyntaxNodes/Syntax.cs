@@ -120,26 +120,11 @@ namespace SyntaxNodes
 
     public class CompilationUnitSyntax : CSharpSyntaxNode
     {
-        public void Awake()
-        {
-            GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
-            textObject.transform.parent = transform;
-            textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
-        }
-
-        private void SetName()
+        public override void Attach(Node other)
         {
             Debug.Log("clicked");
 
-            var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
-
-            if (root.SelectedNode == null)
-            {
-                Debug.Log("nothing selected");
-                return;
-            }
-
-            if (root.SelectedNode.SyntaxNode is Ros.UsingDirectiveSyntax selectedUsing)
+            if (other.SyntaxNode is Ros.UsingDirectiveSyntax selectedUsing)
             {
 
                 var newNode = ((Ros.CompilationUnitSyntax)SyntaxNode).AddUsings(selectedUsing);
@@ -154,14 +139,12 @@ namespace SyntaxNodes
                 //line.SetPositions(new[] { transform.position, transform.position + new Vector3(-0.25f, 0f, 0f) });
 
                 //Line = line;
-                if (root.SelectedNode.gameObject != null)
-                    Destroy(root.SelectedNode.gameObject);
-
-                root.SelectedNode = null;
+                if (other.gameObject != null)
+                    Destroy(other.gameObject);
             }
             else
             {
-                Debug.Log($"Couldn't attach {root.SelectedNode.DisplayString} to {DisplayString}");
+                Debug.Log($"Couldn't attach {other.DisplayString} to {DisplayString}");
             }
         }
     }
@@ -469,7 +452,48 @@ namespace SyntaxNodes
     public class IdentifierNameSyntax : SimpleNameSyntax
     {
         public override string DisplayString =>
-            ((Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax)SyntaxNode).Identifier.ValueText;
+            ((Ros.IdentifierNameSyntax)SyntaxNode).Identifier.ValueText;
+
+        public override void InitComponents(Node parent)
+        {
+            name = GetType().ToString().Replace("Assets.SyntaxNodes.", "");
+
+
+            GameObject thing = (GameObject)Instantiate(Resources.Load("IdentifierName"), transform);
+            thing.name = "IdentifierNamePrefab";
+
+            thing.GetComponentInChildren<TextMesh>().text = ((Ros.IdentifierNameSyntax) SyntaxNode).ToString();
+
+            base.InitLine(parent);
+        }
+
+        public override void Attach(Node other)
+        {
+            Debug.Log("clicked");
+
+            if (other.SyntaxNode is Ros.IdentifierNameSyntax)
+            {
+
+                var newNode = SyntaxFactory.ParseName(DisplayString + "." + other.DisplayString);
+                RootNode.ReplaceNode(SyntaxNode, newNode);
+
+                //var line = gameObject.AddComponent<LineRenderer>();
+                //line.material = new Material(Shader.Find("Unlit/Texture"));
+                //line.startColor = Color.grey;
+                //line.endColor = Color.grey;
+                //line.startWidth = 0.1f;
+                //line.endWidth = 0.1f;
+                //line.SetPositions(new[] { transform.position, transform.position + new Vector3(-0.25f, 0f, 0f) });
+
+                //Line = line;
+                if (other.gameObject != null)
+                    Destroy(other.gameObject);
+            }
+            else
+            {
+                Debug.Log($"Couldn't attach {other.DisplayString} to {DisplayString}");
+            }
+        }
     }
 
     public class NullableTypeSyntax : TypeSyntax
@@ -1008,15 +1032,17 @@ namespace SyntaxNodes
         {
             name = GetType().ToString().Replace("Assets.SyntaxNodes.", "");
 
+
             GameObject thing = (GameObject)Instantiate(Resources.Load("Using"), transform);
             thing.name = "UsingPrefab";
-            GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
-            textObject.transform.parent = transform;
-            textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
+
+            //GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
+            //textObject.transform.parent = transform;
+            //textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
             base.InitLine(parent);
         }
 
-        private void SetName()
+        public override void Attach(Node other)
         {
             Debug.Log("clicked");
 
