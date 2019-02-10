@@ -34,45 +34,55 @@ public abstract class Node : MonoBehaviour
     public virtual Node CreateTree(SyntaxNode node, Node rootNode)
     {
         var nodeScript = InstantiateSyntaxNode(node, rootNode);
-        var newNode = nodeScript.gameObject;
 
         nodeScript.Parent = transform;
-        newNode.transform.parent = transform;
-        newNode.transform.localPosition = new Vector3(1, Height  * - 2, 0);
+        nodeScript.gameObject.transform.parent = transform;
+        nodeScript.gameObject.transform.localPosition = new Vector3(1, Height  * - 2, 0);
 
-        var line = newNode.AddComponent<LineRenderer>();
-        line.material = new Material(Shader.Find("Unlit/Texture"));
-        line.startColor = Color.grey;
-        line.endColor = Color.grey;
-        line.startWidth = 0.1f;
-        line.endWidth = 0.1f;
-        line.SetPositions(new[] { newNode.transform.position, transform.position + new Vector3(-0.25f, 0f, 0f) });
-        nodeScript.Line = line;
+        nodeScript.InitComponents(this);
 
         nodeScript.AttachChildren(node.ChildNodes());
 
         return nodeScript;
     }
 
-    public static Node InstantiateSyntaxNode(SyntaxNode node, [CanBeNull] Node rootNode)
+    public virtual void InitComponents(Node parent)
     {
-        var newNode = new GameObject();
-        var type = SyntaxNodeLookup.LookupType(node);
-        var nodeScript = (Node) newNode.AddComponent(type);
+        var displayName = DisplayString;
+        name = GetType().ToString().Replace("Assets.SyntaxNodes.", "");
 
-        nodeScript.RootNode = rootNode?? nodeScript;
-
-        nodeScript.SyntaxNode = node;
-
-        var displayName = nodeScript.DisplayString;
-        newNode.name = nodeScript.GetType().ToString().Replace("Assets.SyntaxNodes.", "");
-
-        var text = newNode.AddComponent<TextMesh>();
+        var text = gameObject.AddComponent<TextMesh>();
         text.text = displayName;
-        var box = newNode.AddComponent<BoxCollider>();
+        var box = gameObject.AddComponent<BoxCollider>();
 
         var textBounds = text.GetComponent<Renderer>().bounds;
         box.size = textBounds.size;
+
+        InitLine(parent);
+    }
+
+    public virtual void InitLine(Node parent)
+    {
+        var line = gameObject.AddComponent<LineRenderer>();
+        line.material = new Material(Shader.Find("Unlit/Texture"));
+        line.startColor = Color.grey;
+        line.endColor = Color.grey;
+        line.startWidth = 0.1f;
+        line.endWidth = 0.1f;
+        line.SetPositions(new[] {gameObject.transform.position, parent.transform.position + new Vector3(-0.25f, 0f, 0f)});
+        Line = line;
+    }
+
+    // null root to make this a new root
+    public static Node InstantiateSyntaxNode(SyntaxNode rosNode, [CanBeNull] Node rootNode) 
+    {
+        var newNode = new GameObject();
+        var type = SyntaxNodeLookup.LookupType(rosNode);
+        var nodeScript = (Node) newNode.AddComponent(type);
+
+        nodeScript.RootNode = rootNode?? nodeScript;
+        nodeScript.SyntaxNode = rosNode;
+
         return nodeScript;
     }
 

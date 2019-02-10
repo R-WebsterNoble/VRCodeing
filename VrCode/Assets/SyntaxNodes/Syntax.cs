@@ -1004,11 +1004,16 @@ namespace SyntaxNodes
     {
         public override string DisplayString => "using";
 
-        public void Awake()
+        public override void InitComponents(Node parent)
         {
+            name = GetType().ToString().Replace("Assets.SyntaxNodes.", "");
+
+            GameObject thing = (GameObject)Instantiate(Resources.Load("Using"), transform);
+            thing.name = "UsingPrefab";
             GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
             textObject.transform.parent = transform;
             textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
+            base.InitLine(parent);
         }
 
         private void SetName()
