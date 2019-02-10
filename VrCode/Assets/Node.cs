@@ -86,7 +86,8 @@ public abstract class Node : MonoBehaviour
         return nodeScript;
     }
 
-    internal virtual void OnMouseDown()
+    [UsedImplicitly]
+    public void OnMouseDown()
     {
         ScreenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 
@@ -97,7 +98,7 @@ public abstract class Node : MonoBehaviour
     }
 
     [UsedImplicitly]
-    void OnMouseDrag()
+    public void OnMouseDrag()
     {
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z);
 
