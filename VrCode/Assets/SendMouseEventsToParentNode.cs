@@ -16,12 +16,12 @@ public class SendMouseEventsToParentNode : MonoBehaviour
     [UsedImplicitly]
     public void OnMouseDown()
     {
-        Parent.OnMouseDown();
+        Parent.Draggable.OnMouseDown();
     }
 
     [UsedImplicitly]
     public void OnMouseDrag()
     {
-        Parent.OnMouseDrag();
+        Parent.Draggable.OnMouseDrag();
     }
 }

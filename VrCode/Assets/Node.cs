@@ -15,9 +15,14 @@ public abstract class Node : MonoBehaviour
     public Node RootNode { get; set; }
 
     public AttachmentPoint AttachmentPoint;
+    public Dragable Draggable;
 
-    public Vector3 ScreenPoint;
-    public Vector3 Offset;
+    [UsedImplicitly]
+    void Awake()
+    {
+        Draggable = gameObject.AddComponent<Dragable>();
+        Draggable.Node = this;
+    }
 
     public virtual string DisplayString => SyntaxNode.GetType().ToString()
         .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "")
@@ -94,38 +99,6 @@ public abstract class Node : MonoBehaviour
         return nodeScript;
     }
 
-    [UsedImplicitly]
-
-    public void OnMouseDown()
-    //public void OnBeginDrag(PointerEventData eventData)
-    {
-        ScreenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-
-        Offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z));
-
-        var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
-        root.SelectedNode = this;
-    }
-
-    [UsedImplicitly]
-    public void OnMouseDrag()
-    //public void OnDrag(PointerEventData eventData)
-    {
-        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z);
-
-        Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + Offset;
-
-        var movement = curPosition - transform.position;
-        //GetComponent<Rigidbody>().MovePosition(curPosition);
-        foreach (var rb in GetComponentsInChildren<Rigidbody>())
-        {
-            rb.MovePosition(rb.transform.position + movement);
-        }
-        //transform.position = curPosition;
-
-        UpdateLine();
-    }
-
     public void UpdateLine()
     {
         if (Line != null)
@@ -141,6 +114,7 @@ public abstract class Node : MonoBehaviour
     {
         if(RootNode != this)
             throw new Exception("Only call ReplaceNode on Root Node");
+
         var newTreeRoot = SyntaxNode.ReplaceNode(oldNode, newNode);
         RebuildTree(newTreeRoot);
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using UnityEngine; 
 
@@ -464,6 +465,8 @@ namespace SyntaxNodes
 
             thing.GetComponentInChildren<TextMesh>().text = ((Ros.IdentifierNameSyntax) SyntaxNode).ToString();
 
+            Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
+
             base.InitLine(parent);
         }
 
@@ -474,8 +477,16 @@ namespace SyntaxNodes
             if (other.SyntaxNode is Ros.IdentifierNameSyntax)
             {
 
-                var newNode = SyntaxFactory.ParseName(DisplayString + "." + other.DisplayString);
-                RootNode.ReplaceNode(SyntaxNode, newNode);
+                try
+                {
+                    var newNode = SyntaxFactory.ParseName(DisplayString + "." + other.DisplayString);
+                    RootNode.ReplaceNode(SyntaxNode, newNode);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"Couldn't attach {other.DisplayString} to {DisplayString}: {e.Message}");
+                    return;
+                }
 
                 //var line = gameObject.AddComponent<LineRenderer>();
                 //line.material = new Material(Shader.Find("Unlit/Texture"));
@@ -1036,6 +1047,8 @@ namespace SyntaxNodes
             GameObject thing = (GameObject)Instantiate(Resources.Load("Using"), transform);
             thing.name = "UsingPrefab";
 
+            Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
+
             //GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
             //textObject.transform.parent = transform;
             //textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
@@ -1044,30 +1057,18 @@ namespace SyntaxNodes
 
         public override void Attach(Node other)
         {
-            Debug.Log("clicked");
-
-            var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
-
-            if (root.SelectedNode == null)
-            {
-                Debug.Log("nothing selected");
-                return;
-            }
-
-            if (root.SelectedNode.SyntaxNode is Ros.NameSyntax selectedName)
+            if (other.SyntaxNode is Ros.NameSyntax selectedName)
             {
 
                 var newNode = ((Ros.UsingDirectiveSyntax) SyntaxNode).WithName(selectedName);
                 RootNode.ReplaceNode(SyntaxNode, newNode);
 
-                if(root.SelectedNode.gameObject != null)
-                    Destroy(root.SelectedNode.gameObject);
-
-                root.SelectedNode = null;
+                if(other.gameObject != null)
+                    Destroy(other.gameObject);
             }
             else
             {
-                Debug.Log($"Couldn't attach {root.SelectedNode.DisplayString} to {DisplayString}");
+                Debug.Log($"Couldn't attach {other.DisplayString} to {DisplayString}");
             }
         }
     }
