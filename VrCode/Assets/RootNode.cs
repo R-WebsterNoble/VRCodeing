@@ -1,43 +1,18 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
-using NodeComponents;
 using SyntaxNodes;
 using UnityEngine;
 
 public class RootNode : CompilationUnitSyntax
 {
-    public Node SelectedNode;
-    public GameObject AttachmentPoint;
+    //public GameObject AttachmentPoint;
 
     //private Dictionary<SyntaxNode, GameObject> _nodes = new Dictionary<SyntaxNode, GameObject>();
 
     [UsedImplicitly]
     private void Update()
     {
-        if (SelectedNode == null)
-            return;
-
-        if (Input.GetKeyUp(KeyCode.Delete))
-        {
-            if (SelectedNode.RootNode == SelectedNode)
-            {
-                Destroy(SelectedNode.gameObject);
-                SelectedNode = null;
-                return;
-            }
-
-            try
-            {
-                var newRootNode =
-                    SyntaxNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
-                RebuildTree(newRootNode);
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.Message);
-            }
-        }
     }
 
     // Start is called before the first frame update
