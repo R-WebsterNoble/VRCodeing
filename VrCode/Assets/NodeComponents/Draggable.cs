@@ -61,8 +61,8 @@ namespace NodeComponents
 
             var target = _closestNode.gameObject.GetComponentInParent<Node>();
 
-            if (_closestNode.gameObject.GetComponent<AttachmentPoint>().SendToParent)
-                target = target.transform.parent.gameObject.GetComponentInParent<Node>();
+            if (_closestNode.gameObject.GetComponent<AttachmentPoint>().SendToParent && target.Parent != null)
+                target = target.Parent.gameObject.GetComponentInParent<Node>();
 
             target.Attach(Node);
         }

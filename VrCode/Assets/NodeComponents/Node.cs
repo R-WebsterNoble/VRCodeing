@@ -153,8 +153,12 @@ namespace NodeComponents
             try
             {
                 var newRootNode = RootNode.SyntaxNode.RemoveNode(SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+                Parent.Children.Remove(this);
                 RootNode.RebuildTree(newRootNode);
                 RootNode = this;
+                Parent = null;
+                Line = null;
+                transform.parent = null;
             }
             catch (Exception e)
             {
