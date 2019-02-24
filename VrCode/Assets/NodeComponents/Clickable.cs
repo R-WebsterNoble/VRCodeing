@@ -9,7 +9,7 @@ namespace NodeComponents
         public event EventHandler Clicked;
 
         [UsedImplicitly]
-        void OnMouseDown()
+        private void OnMouseDown()
         {
             Clicked?.Invoke(this, EventArgs.Empty);
         }

@@ -12,7 +12,7 @@ public class RootNode : CompilationUnitSyntax
     //private Dictionary<SyntaxNode, GameObject> _nodes = new Dictionary<SyntaxNode, GameObject>();
 
     [UsedImplicitly]
-    void Update()
+    private void Update()
     {
         if (SelectedNode == null)
             return;
@@ -28,7 +28,8 @@ public class RootNode : CompilationUnitSyntax
 
             try
             {
-                var newRootNode = SyntaxNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+                var newRootNode =
+                    SyntaxNode.RemoveNode(SelectedNode.SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
                 RebuildTree(newRootNode);
             }
             catch (Exception e)
@@ -39,9 +40,9 @@ public class RootNode : CompilationUnitSyntax
     }
 
     // Start is called before the first frame update
-        
+
     [UsedImplicitly]
-    void Start()
+    private void Start()
     {
         RootNode = this;
         SyntaxNode = new CodeEditor().Gen().GetRoot();

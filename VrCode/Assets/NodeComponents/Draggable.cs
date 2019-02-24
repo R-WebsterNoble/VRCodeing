@@ -13,7 +13,7 @@ namespace NodeComponents
         private GameObject _closestNode;
         private Vector3 _startPos;
 
-        const float DetachSqrDist = 3;
+        private const float DetachSqrDist = 3;
 
         [UsedImplicitly]
         public void OnMouseDown()
@@ -22,41 +22,34 @@ namespace NodeComponents
 
             ScreenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 
-            Offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z));
+            Offset = gameObject.transform.position -
+                     Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
+                         ScreenPoint.z));
             //var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
         }
 
         [UsedImplicitly]
         public void OnMouseDrag()
         {
-            Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z);
+            var curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z);
 
-            Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + Offset;
+            var curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + Offset;
 
             var movement = curPosition - transform.position;
-            foreach (var rb in GetComponentsInChildren<Rigidbody>())
-            {
-                rb.MovePosition(rb.transform.position + movement);
-            }
-            
+            foreach (var rb in GetComponentsInChildren<Rigidbody>()) rb.MovePosition(rb.transform.position + movement);
+
             Node.UpdateLine();
 
 
-            if (Node.RootNode != Node && (_startPos - transform.position).sqrMagnitude > DetachSqrDist)
-            {
-                Node.Detach();
-            }
+            if (Node.RootNode != Node && (_startPos - transform.position).sqrMagnitude > DetachSqrDist) Node.Detach();
 
-            if (Anchor != null)
-            {
-                FindClosestNode();
-            }
+            if (Anchor != null) FindClosestNode();
         }
 
         [UsedImplicitly]
         public void OnMouseUp()
         {
-            if(_closestNode == null)
+            if (_closestNode == null)
                 return;
 
             var target = _closestNode.gameObject.GetComponentInParent<Node>();
@@ -68,7 +61,8 @@ namespace NodeComponents
         }
 
 
-        static readonly Collider[] SnapOntoNearbyTargets = new Collider[100];
+        private static readonly Collider[] SnapOntoNearbyTargets = new Collider[100];
+
         private void FindClosestNode()
         {
             Physics.OverlapSphereNonAlloc(
@@ -78,17 +72,17 @@ namespace NodeComponents
                 1 << 9,
                 QueryTriggerInteraction.Ignore);
 
-            float closestTargetDist = float.PositiveInfinity;
+            var closestTargetDist = float.PositiveInfinity;
             foreach (var target in SnapOntoNearbyTargets)
             {
-                if(target == null)
+                if (target == null)
                     break;
 
                 if (target.gameObject.GetComponentInParent<Draggable>() == this)
                     continue;
 
-                Vector3 directionToTarget = Anchor.transform.position - target.transform.position;
-                float distToTarget = directionToTarget.sqrMagnitude;
+                var directionToTarget = Anchor.transform.position - target.transform.position;
+                var distToTarget = directionToTarget.sqrMagnitude;
                 if (distToTarget < closestTargetDist)
                 {
                     closestTargetDist = distToTarget;

@@ -12,7 +12,7 @@ namespace Voice
     {
         public RepeatedField<StreamingRecognitionResult> LatestResults { get; private set; }
 
-        readonly BufferBlock<AudioData> _voiceData = new BufferBlock<AudioData>();
+        private readonly BufferBlock<AudioData> _voiceData = new BufferBlock<AudioData>();
 
         public VoiceRecognitionStreamer(SpeechClient speech, StreamingRecognizeRequest streamingRecognizeRequest)
         {
@@ -29,15 +29,13 @@ namespace Voice
                     {
                         while (await streamingCall.ResponseStream.MoveNext(
                             default).ConfigureAwait(false))
-                        {
                             LatestResults = streamingCall.ResponseStream.Current.Results;
-                        }
                     });
 
                     while (await _voiceData.OutputAvailableAsync().ConfigureAwait(false))
                     {
                         var data = await _voiceData.ReceiveAsync().ConfigureAwait(false);
-                        
+
                         var voiceData = WavConvert.Convert(data);
 
                         await streamingCall.WriteAsync(new StreamingRecognizeRequest

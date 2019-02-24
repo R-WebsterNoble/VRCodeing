@@ -8,7 +8,7 @@ namespace NodeComponents
         public Node Parent;
 
         [UsedImplicitly]
-        void Awake()
+        private void Awake()
         {
             Parent = gameObject.GetComponentInParent<Node>();
         }

@@ -8,7 +8,7 @@ namespace SyntaxFactories
     public class NameFactory : MonoBehaviour
     {
         [UsedImplicitly]
-        void OnMouseDown()
+        private void OnMouseDown()
         {
             var text = GameObject.FindGameObjectWithTag("Voice").GetComponent<TextMesh>().text;
 
@@ -19,7 +19,7 @@ namespace SyntaxFactories
             node.InitComponents(null);
 
             node.gameObject.transform.position = gameObject.transform.position;
-            node.gameObject.transform.Translate(0,10,0);
+            node.gameObject.transform.Translate(0, 10, 0);
         }
     }
 }

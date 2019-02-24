@@ -9,14 +9,14 @@ namespace NodeComponents
         public bool SendToParent = false;
 
         [UsedImplicitly]
-        void Awake()
+        private void Awake()
         {
             Node = gameObject.GetComponentInParent<Node>();
             Node.AttachmentPoint = this;
         }
 
         [UsedImplicitly]
-        void OnTriggerEnter(Collider col)
+        private void OnTriggerEnter(Collider col)
         {
             var other = col.gameObject.GetComponentInParent<Node>();
 

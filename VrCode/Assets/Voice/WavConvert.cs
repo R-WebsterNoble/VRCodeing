@@ -24,9 +24,9 @@ namespace Voice
             for (var c = 0; c < audioData.SampleCount; c++)
             {
                 var i = (audioData.VoiceStartPos + c) % audioData.Samples.Length;
-                var value = (short)(audioData.Samples[i] * RescaleFactor);
-                bytes[p++] = (byte)(value >> 0);
-                bytes[p++] = (byte)(value >> 8);
+                var value = (short) (audioData.Samples[i] * RescaleFactor);
+                bytes[p++] = (byte) (value >> 0);
+                bytes[p++] = (byte) (value >> 8);
             }
 
             return bytes;
@@ -39,8 +39,8 @@ namespace Voice
 
         private static void WriteHeader(AudioData audioData, byte[] data)
         {
-            int samples = audioData.SampleCount;
-            ushort channels = (ushort) audioData.Channels;
+            var samples = audioData.SampleCount;
+            var channels = (ushort) audioData.Channels;
             var offset = 0u;
 
             var riff = Encoding.UTF8.GetBytes("RIFF");
@@ -70,7 +70,7 @@ namespace Voice
             var sampleRate = BitConverter.GetBytes(audioData.Frequency);
             AddDataToBuffer(data, ref offset, sampleRate);
 
-            var byteRate = BitConverter.GetBytes(audioData.Frequency * channels *2);
+            var byteRate = BitConverter.GetBytes(audioData.Frequency * channels * 2);
             AddDataToBuffer(data, ref offset, byteRate);
 
             var blockAlign = (ushort) (channels * 2);

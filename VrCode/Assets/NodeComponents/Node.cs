@@ -20,7 +20,7 @@ namespace NodeComponents
         public Draggable Draggable;
 
         [UsedImplicitly]
-        void Awake()
+        private void Awake()
         {
             Draggable = gameObject.AddComponent<Draggable>();
             Draggable.Node = this;
@@ -46,7 +46,7 @@ namespace NodeComponents
 
             nodeScript.Parent = this;
             nodeScript.gameObject.transform.parent = transform;
-            nodeScript.gameObject.transform.localPosition = new Vector3(1, Height  * - 2, 0);
+            nodeScript.gameObject.transform.localPosition = new Vector3(1, Height * -2, 0);
 
             nodeScript.InitComponents(this);
 
@@ -81,18 +81,19 @@ namespace NodeComponents
             line.endColor = Color.grey;
             line.startWidth = 0.1f;
             line.endWidth = 0.1f;
-            line.SetPositions(new[] {gameObject.transform.position, parent.transform.position + new Vector3(-0.25f, 0f, 0f)});
+            line.SetPositions(new[]
+                {gameObject.transform.position, parent.transform.position + new Vector3(-0.25f, 0f, 0f)});
             Line = line;
         }
 
         // null root to make this a new root
-        public static Node InstantiateSyntaxNode(SyntaxNode rosNode, [CanBeNull] Node rootNode) 
+        public static Node InstantiateSyntaxNode(SyntaxNode rosNode, [CanBeNull] Node rootNode)
         {
             var newNode = new GameObject();
             var type = SyntaxNodeLookup.LookupType(rosNode);
             var nodeScript = (Node) newNode.AddComponent(type);
 
-            nodeScript.RootNode = rootNode?? nodeScript;
+            nodeScript.RootNode = rootNode ?? nodeScript;
             nodeScript.SyntaxNode = rosNode;
 
             var rigidBody = newNode.AddComponent<Rigidbody>();
@@ -106,15 +107,12 @@ namespace NodeComponents
             if (Line != null)
                 Line.SetPositions(new[] {transform.position, Parent.transform.position});
 
-            foreach (var child in Children)
-            {
-                child.UpdateLine();
-            }
+            foreach (var child in Children) child.UpdateLine();
         }
 
         public void ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode)
         {
-            if(RootNode != this)
+            if (RootNode != this)
                 throw new Exception("Only call ReplaceNode on Root Node");
 
             var newTreeRoot = SyntaxNode.ReplaceNode(oldNode, newNode);
@@ -125,10 +123,8 @@ namespace NodeComponents
         {
             SyntaxNode = newRootNode;
             foreach (var child in Children)
-            {
-                if(child != null && child.gameObject != null)
+                if (child != null && child.gameObject != null)
                     Destroy(child.gameObject);
-            }
 
             Height = 1;
             Children = new List<Node>();
@@ -137,7 +133,6 @@ namespace NodeComponents
 
         public virtual void Attach(Node other)
         {
-
         }
 
         //private void DeleteTree()

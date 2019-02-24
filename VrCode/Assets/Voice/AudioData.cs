@@ -9,13 +9,11 @@ namespace Voice
             Samples = new float[c.samples];
             c.GetData(Samples, 0);
 
-            if(voiceEndPos >= voiceStartPos)
+            if (voiceEndPos >= voiceStartPos)
                 SampleCount = voiceEndPos - voiceStartPos;
             else
-            {
-                SampleCount = ((c.samples) - voiceStartPos) // distance from start pos to end of buffer
-                              + (voiceEndPos); // distance from start of buffer to end pos
-            }
+                SampleCount = c.samples - voiceStartPos // distance from start pos to end of buffer
+                              + voiceEndPos; // distance from start of buffer to end pos
 
             VoiceStartPos = voiceStartPos;
             VoiceEndPos = voiceEndPos;

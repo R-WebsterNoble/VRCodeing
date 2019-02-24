@@ -2,7 +2,6 @@
 using Google.Cloud.Speech.V1;
 using JetBrains.Annotations;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace Voice
 {
@@ -34,7 +33,7 @@ namespace Voice
             {
                 Debug.LogWarning("Microphone not connected!");
             }
-            else 
+            else
             {
                 Microphone.GetDeviceCaps(null, out var minFreq, out _maxFreq);
 
@@ -51,7 +50,7 @@ namespace Voice
                     SampleRateHertz = _maxFreq,
                     LanguageCode = "en-GB",
                     EnableAutomaticPunctuation = true,
-                    Model = "command_and_search",
+                    Model = "command_and_search"
                 };
 
                 _streamingRecognizeRequest = new StreamingRecognizeRequest
@@ -89,15 +88,10 @@ namespace Voice
             //}
 
             if (Input.GetKeyDown("space"))
-            {
                 StartVoice();
-            }
             else if (_recording && (!Input.GetKey("space") || (Streamer?.LatestResults?.Any(r => r.IsFinal) ?? false)))
-            {
                 EndVoice();
-            }
-            else if(_recording)
-            {
+            else if (_recording)
                 if (_lastChunk + ChunkFrequency < Time.fixedUnscaledTime)
                 {
                     //Debug.Log($"Last {_lastChunk}, now: {Time.fixedUnscaledTime}, Diff: {Time.fixedUnscaledTime - _lastChunk}");
@@ -105,7 +99,6 @@ namespace Voice
 
                     _lastChunk = Time.fixedUnscaledTime;
                 }
-            }
         }
 
         private void StartVoice()
@@ -115,7 +108,7 @@ namespace Voice
             _recording = true;
             _lastVoicePos = 0;
             _lastChunk = Time.fixedUnscaledTime;
-            
+
             Streamer = new VoiceRecognitionStreamer(_speechClient, _streamingRecognizeRequest);
         }
 

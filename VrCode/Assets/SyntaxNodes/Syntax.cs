@@ -1,9 +1,7 @@
 ﻿using System;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using NodeComponents;
-using UnityEngine; 
-
+using UnityEngine;
 using Ros = Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SyntaxNodes
@@ -128,8 +126,7 @@ namespace SyntaxNodes
 
             if (other.SyntaxNode is Ros.UsingDirectiveSyntax selectedUsing)
             {
-
-                var newNode = ((Ros.CompilationUnitSyntax)SyntaxNode).AddUsings(selectedUsing);
+                var newNode = ((Ros.CompilationUnitSyntax) SyntaxNode).AddUsings(selectedUsing);
                 RootNode.ReplaceNode(SyntaxNode, newNode);
 
                 //var line = gameObject.AddComponent<LineRenderer>();
@@ -324,7 +321,7 @@ namespace SyntaxNodes
     public class LiteralExpressionSyntax : ExpressionSyntax
     {
         public override string DisplayString =>
-            ((Ros.LiteralExpressionSyntax)SyntaxNode).Token.ToString().Replace("\n", "");
+            ((Ros.LiteralExpressionSyntax) SyntaxNode).Token.ToString().Replace("\n", "");
     }
 
     public class MakeRefExpressionSyntax : ExpressionSyntax
@@ -454,14 +451,14 @@ namespace SyntaxNodes
     public class IdentifierNameSyntax : SimpleNameSyntax
     {
         public override string DisplayString =>
-            ((Ros.IdentifierNameSyntax)SyntaxNode).Identifier.ValueText;
+            ((Ros.IdentifierNameSyntax) SyntaxNode).Identifier.ValueText;
 
         public override void InitComponents(Node parent)
         {
             name = GetType().ToString().Replace("Assets.SyntaxNodes.", "");
 
 
-            GameObject thing = (GameObject)Instantiate(Resources.Load("IdentifierName"), transform);
+            var thing = (GameObject) Instantiate(Resources.Load("IdentifierName"), transform);
             thing.name = "IdentifierNamePrefab";
 
             thing.GetComponentInChildren<TextMesh>().text = ((Ros.IdentifierNameSyntax) SyntaxNode).ToString();
@@ -477,7 +474,6 @@ namespace SyntaxNodes
 
             if (other.SyntaxNode is Ros.IdentifierNameSyntax)
             {
-
                 try
                 {
                     var newNode = SyntaxFactory.ParseName(DisplayString + "." + other.DisplayString);
@@ -523,7 +519,7 @@ namespace SyntaxNodes
     public class PredefinedTypeSyntax : TypeSyntax
     {
         public override string DisplayString =>
-            ((Microsoft.CodeAnalysis.CSharp.Syntax.PredefinedTypeSyntax)SyntaxNode).Keyword.ValueText;
+            ((Ros.PredefinedTypeSyntax) SyntaxNode).Keyword.ValueText;
     }
 
     public class RefTypeSyntax : TypeSyntax
@@ -666,7 +662,6 @@ namespace SyntaxNodes
 
     public class NamespaceDeclarationSyntax : MemberDeclarationSyntax
     {
-
         public override string DisplayString => "namespace";
     }
 
@@ -812,7 +807,6 @@ namespace SyntaxNodes
 
     public class ForStatementSyntax : StatementSyntax
     {
-
         public override string DisplayString => "for";
     }
 
@@ -844,7 +838,6 @@ namespace SyntaxNodes
 
     public class ReturnStatementSyntax : StatementSyntax
     {
-
         public override string DisplayString => "return";
     }
 
@@ -1045,7 +1038,7 @@ namespace SyntaxNodes
             name = GetType().ToString().Replace("Assets.SyntaxNodes.", "");
 
 
-            GameObject thing = (GameObject)Instantiate(Resources.Load("Using"), transform);
+            var thing = (GameObject) Instantiate(Resources.Load("Using"), transform);
             thing.name = "UsingPrefab";
 
             Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
@@ -1060,11 +1053,10 @@ namespace SyntaxNodes
         {
             if (other.SyntaxNode is Ros.NameSyntax selectedName)
             {
-
                 var newNode = ((Ros.UsingDirectiveSyntax) SyntaxNode).WithName(selectedName);
                 RootNode.ReplaceNode(SyntaxNode, newNode);
 
-                if(other.gameObject != null)
+                if (other.gameObject != null)
                     Destroy(other.gameObject);
             }
             else
@@ -1077,7 +1069,7 @@ namespace SyntaxNodes
     public class VariableDeclarationSyntax : CSharpSyntaxNode
     {
         public override string DisplayString =>
-            ((Microsoft.CodeAnalysis.CSharp.Syntax.VariableDeclarationSyntax) SyntaxNode).Variables.FirstOrDefault().Identifier.Text;
+            ((Ros.VariableDeclarationSyntax) SyntaxNode).Variables.FirstOrDefault().Identifier.Text;
     }
 
     public class VariableDeclaratorSyntax : CSharpSyntaxNode
