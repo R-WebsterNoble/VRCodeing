@@ -11,7 +11,7 @@ namespace NodeComponents
     {
         public virtual int Height { get; set; } = 1;
         public SyntaxNode SyntaxNode { get; set; }
-        public Transform Parent { get; set; }
+        public Node Parent { get; set; }
         public List<Node> Children { get; set; } = new List<Node>();
         public LineRenderer Line { get; set; }
         public Node RootNode { get; set; }
@@ -44,7 +44,7 @@ namespace NodeComponents
         {
             var nodeScript = InstantiateSyntaxNode(node, rootNode);
 
-            nodeScript.Parent = transform;
+            nodeScript.Parent = this;
             nodeScript.gameObject.transform.parent = transform;
             nodeScript.gameObject.transform.localPosition = new Vector3(1, Height  * - 2, 0);
 
@@ -104,7 +104,7 @@ namespace NodeComponents
         public void UpdateLine()
         {
             if (Line != null)
-                Line.SetPositions(new[] {transform.position, Parent.position});
+                Line.SetPositions(new[] {transform.position, Parent.transform.position});
 
             foreach (var child in Children)
             {
