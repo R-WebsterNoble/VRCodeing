@@ -10,13 +10,19 @@ namespace NodeComponents
         public Vector3 ScreenPoint;
         public Vector3 Offset;
 
+        private GameObject _closestNode;
+        private Vector3 _startPos;
+
+        const float DetachSqrDist = 3;
+
         [UsedImplicitly]
         public void OnMouseDown()
         {
+            _startPos = gameObject.transform.position;
+
             ScreenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 
             Offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z));
-
             //var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
         }
 
@@ -32,12 +38,18 @@ namespace NodeComponents
             {
                 rb.MovePosition(rb.transform.position + movement);
             }
-
+            
             Node.UpdateLine();
+
+
+            if (Node.RootNode != Node && (_startPos - transform.position).sqrMagnitude > DetachSqrDist)
+            {
+                Node.Detach();
+            }
 
             if (Anchor != null)
             {
-                SnapOnto();
+                FindClosestNode();
             }
         }
 
@@ -57,9 +69,7 @@ namespace NodeComponents
 
 
         static readonly Collider[] SnapOntoNearbyTargets = new Collider[100];
-        private GameObject _closestNode;
-
-        private void SnapOnto()
+        private void FindClosestNode()
         {
             Physics.OverlapSphereNonAlloc(
                 Anchor.transform.position,

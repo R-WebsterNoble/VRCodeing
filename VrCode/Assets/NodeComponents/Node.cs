@@ -147,5 +147,19 @@ namespace NodeComponents
         //        DeleteTree();
         //    }
         //}
+
+        public void Detach()
+        {
+            try
+            {
+                var newRootNode = RootNode.SyntaxNode.RemoveNode(SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+                RootNode.RebuildTree(newRootNode);
+                RootNode = this;
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.Message);
+            }
+        }
     }
 }
