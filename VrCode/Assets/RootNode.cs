@@ -8,6 +8,7 @@ using UnityEngine;
 public class RootNode : CompilationUnitSyntax
 {
     public Node SelectedNode;
+    public GameObject AttachmentPoint;
 
     //private Dictionary<SyntaxNode, GameObject> _nodes = new Dictionary<SyntaxNode, GameObject>();
 
