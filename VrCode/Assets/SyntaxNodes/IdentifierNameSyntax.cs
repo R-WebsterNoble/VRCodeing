@@ -15,12 +15,12 @@ namespace SyntaxNodes
             name = GetType().ToString().Replace("SyntaxNodes.", "");
 
 
-            var thing = (GameObject) Instantiate(Resources.Load("IdentifierName"), transform);
-            thing.name = "IdentifierNamePrefab";
+            //var thing = (GameObject) Instantiate(Resources.Load("IdentifierName"), transform);
+            //thing.name = "IdentifierNamePrefab";
 
-            thing.GetComponentInChildren<TextMesh>().text = ((Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax) SyntaxNode).ToString();
+            //thing.GetComponentInChildren<TextMesh>().text = ((Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax) SyntaxNode).ToString();
 
-            //Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
+            ////Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
 
             base.InitLine(parent);
         }

@@ -10,13 +10,13 @@ namespace NodeComponents
     public abstract class Node : MonoBehaviour
     {
         public virtual int Height { get; set; } = 1;
-        public SyntaxNode SyntaxNode { get; set; }
-        public Node Parent { get; set; }
         public List<Node> Children { get; set; } = new List<Node>();
-        public LineRenderer Line { get; set; }
+        public Node Parent { get; set; }
         public Node RootNode { get; set; }
 
-        public AttachmentPoint AttachmentPoint;
+        public SyntaxNode SyntaxNode { get; set; }
+        public LineRenderer Line;
+
         public Draggable Draggable;
 
         [UsedImplicitly]
@@ -58,7 +58,7 @@ namespace NodeComponents
         public virtual void InitComponents(Node parent)
         {
             var displayName = DisplayString;
-            name = GetType().ToString().Replace("Assets.SyntaxNodes.", "");
+            name = GetType().ToString().Replace("SyntaxNodes.", "");
 
             var text = gameObject.AddComponent<TextMesh>();
             text.text = displayName;
@@ -82,22 +82,45 @@ namespace NodeComponents
             line.startWidth = 0.1f;
             line.endWidth = 0.1f;
             line.SetPositions(new[]
-                {gameObject.transform.position, parent.transform.position + new Vector3(-0.25f, 0f, 0f)});
+            {
+                gameObject.transform.position,
+                parent.transform.position + new Vector3(-0.25f, 0f, 0f)
+            });
+
             Line = line;
         }
 
         // null root to make this a new root
         public static Node InstantiateSyntaxNode(SyntaxNode rosNode, [CanBeNull] Node rootNode)
         {
-            var newNode = new GameObject();
-            var type = SyntaxNodeLookup.LookupType(rosNode);
-            var nodeScript = (Node) newNode.AddComponent(type);
+            GameObject newNode;
+            Node nodeScript;
+
+            var nodeName = rosNode.GetType().ToString()
+                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
+
+            var nodePrefab = Resources.Load("SyntaxNodePrefabs/" + nodeName);
+
+            if(nodePrefab != null)
+            {
+                newNode = (GameObject)Instantiate(nodePrefab, rootNode?.transform);
+                nodeScript = newNode.GetComponent<Node>();
+            }
+            else
+            {
+                newNode = new GameObject();
+                var type = SyntaxNodeLookup.LookupType(rosNode);
+                nodeScript = (Node)newNode.AddComponent(type);
+                //var nodeScript = newNode.GetComponent<Node>();
+
+
+
+                var rigidBody = newNode.AddComponent<Rigidbody>();
+                rigidBody.isKinematic = true;
+            }
 
             nodeScript.RootNode = rootNode ?? nodeScript;
             nodeScript.SyntaxNode = rosNode;
-
-            var rigidBody = newNode.AddComponent<Rigidbody>();
-            rigidBody.isKinematic = true;
 
             return nodeScript;
         }

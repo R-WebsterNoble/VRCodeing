@@ -6,7 +6,7 @@ namespace NodeComponents
     public class Draggable : MonoBehaviour
     {
         public Node Node;
-        public GameObject Anchor;
+        public Transform Anchor;
         public Vector3 ScreenPoint;
         public Vector3 Offset;
 
@@ -52,11 +52,7 @@ namespace NodeComponents
             if (_closestNode == null)
                 return;
 
-            var target = _closestNode.gameObject.GetComponentInParent<Node>();
-
-            if (_closestNode.gameObject.GetComponent<AttachmentPoint>().SendToParent && target.Parent != null)
-                target = target.Parent.gameObject.GetComponentInParent<Node>();
-
+            var target = _closestNode.gameObject.GetComponent<AttachmentPoint>();
             target.Attach(Node);
         }
 
