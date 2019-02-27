@@ -10,10 +10,10 @@ namespace SyntaxNodes
         public override string DisplayString =>
             ((Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax) SyntaxNode).Identifier.ValueText;
 
-        public override void InitComponents(Node parent)
+        public override void InitComponents()
         {
-            name = GetType().ToString().Replace("SyntaxNodes.", "");
-
+            name = DisplayString;
+            GetComponentInChildren<TextMesh>().text = DisplayString;
 
             //var thing = (GameObject) Instantiate(Resources.Load("IdentifierName"), transform);
             //thing.name = "IdentifierNamePrefab";
@@ -22,7 +22,7 @@ namespace SyntaxNodes
 
             ////Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
 
-            base.InitLine(parent);
+            base.InitLine();
         }
 
         public override void Attach(Node other)

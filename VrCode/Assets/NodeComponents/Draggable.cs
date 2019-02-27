@@ -15,6 +15,14 @@ namespace NodeComponents
 
         private const float DetachSqrDist = 3;
 
+
+        [UsedImplicitly]
+        private void Awake()
+        {
+            if (Node == null)
+                Node = gameObject.GetComponentInParent<Node>();
+        }
+
         [UsedImplicitly]
         public void OnMouseDown()
         {
@@ -25,6 +33,7 @@ namespace NodeComponents
             Offset = gameObject.transform.position -
                      Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
                          ScreenPoint.z));
+
             //var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
         }
 
@@ -61,20 +70,22 @@ namespace NodeComponents
 
         private void FindClosestNode()
         {
-            Physics.OverlapSphereNonAlloc(
+            var objCount = Physics.OverlapSphereNonAlloc(
                 Anchor.transform.position,
-                5f,
+                3f,
                 SnapOntoNearbyTargets,
                 1 << 9,
                 QueryTriggerInteraction.Ignore);
 
             var closestTargetDist = float.PositiveInfinity;
-            foreach (var target in SnapOntoNearbyTargets)
+            for (var index = 0; index < objCount; index++)
             {
+                var target = SnapOntoNearbyTargets[index];
                 if (target == null)
                     break;
 
-                if (target.gameObject.GetComponentInParent<Draggable>() == this)
+                if (target.gameObject.GetComponentInParent<Draggable>() == this ||
+                    (target.gameObject.GetComponentInParent<Node>().RootNode == Node.RootNode))
                     continue;
 
                 var directionToTarget = Anchor.transform.position - target.transform.position;

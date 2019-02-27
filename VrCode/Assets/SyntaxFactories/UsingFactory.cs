@@ -12,7 +12,7 @@ namespace SyntaxFactories
         {
             var name = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(""));
             var node = Node.InstantiateSyntaxNode(name, null);
-            node.InitComponents(null);
+            node.InitComponents();
 
             node.gameObject.transform.position = gameObject.transform.position;
             node.gameObject.transform.Translate(0, 10, 0);

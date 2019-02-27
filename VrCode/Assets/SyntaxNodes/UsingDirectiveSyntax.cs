@@ -12,7 +12,7 @@ namespace SyntaxNodes
         public GameObject ChildAp;
         public GameObject BottomAp;
 
-        public override void InitComponents(Node parent)
+        public override void InitComponents()
         {
             ChildAp.GetComponent<AttachmentPoint>().Attached += AttachChildAp;
             name = GetType().ToString().Replace("SyntaxNodes.", "");
@@ -26,7 +26,7 @@ namespace SyntaxNodes
             //GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
             //textObject.transform.parent = transform;
             //textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
-            base.InitLine(parent);
+            base.InitLine();
         }
 
         private void AttachChildAp(object sender, Node other)

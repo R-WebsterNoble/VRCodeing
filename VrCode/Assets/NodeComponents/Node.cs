@@ -22,7 +22,10 @@ namespace NodeComponents
         [UsedImplicitly]
         private void Awake()
         {
-            Draggable = gameObject.AddComponent<Draggable>();
+            if(Draggable == null)
+            {
+                Draggable = gameObject.AddComponent<Draggable>();
+            }
             Draggable.Node = this;
         }
 
@@ -48,14 +51,14 @@ namespace NodeComponents
             nodeScript.gameObject.transform.parent = transform;
             nodeScript.gameObject.transform.localPosition = new Vector3(1, Height * -2, 0);
 
-            nodeScript.InitComponents(this);
+            nodeScript.InitComponents();
 
             nodeScript.AttachChildren(node.ChildNodes());
 
             return nodeScript;
         }
 
-        public virtual void InitComponents(Node parent)
+        public virtual void InitComponents()
         {
             var displayName = DisplayString;
             name = GetType().ToString().Replace("SyntaxNodes.", "");
@@ -67,12 +70,12 @@ namespace NodeComponents
             var textBounds = text.GetComponent<Renderer>().bounds;
             box.size = textBounds.size;
 
-            InitLine(parent);
+            InitLine();
         }
 
-        public virtual void InitLine(Node parent)
+        public virtual void InitLine()
         {
-            if (parent == null)
+            if (Parent == null)
                 return;
 
             var line = gameObject.AddComponent<LineRenderer>();
@@ -84,7 +87,7 @@ namespace NodeComponents
             line.SetPositions(new[]
             {
                 gameObject.transform.position,
-                parent.transform.position + new Vector3(-0.25f, 0f, 0f)
+                Parent.transform.position + new Vector3(-0.25f, 0f, 0f)
             });
 
             Line = line;

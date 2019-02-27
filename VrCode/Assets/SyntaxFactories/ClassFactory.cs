@@ -5,18 +5,18 @@ using UnityEngine;
 
 namespace SyntaxFactories
 {
-    public class NamespaceFactory : MonoBehaviour
+    public class ClassFactory : MonoBehaviour
     {
         [UsedImplicitly]
         private void OnMouseDown()
         {
             var text = GameObject.FindGameObjectWithTag("Voice").GetComponent<TextMesh>().text;
 
-            var nameRosNode = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(text));
+            var nameRosNode = SyntaxFactory.ClassDeclaration(text);
 
             var node = Node.InstantiateSyntaxNode(nameRosNode, null);
 
-            node.InitComponents(null);
+            node.InitComponents();
 
             node.gameObject.transform.position = gameObject.transform.position;
             node.gameObject.transform.Translate(0, 10, 0);
