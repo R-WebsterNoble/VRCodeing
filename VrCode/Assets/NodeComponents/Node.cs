@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
-using SyntaxNodes;
 using UnityEngine;
 
 namespace NodeComponents
 {
-    public abstract class Node : MonoBehaviour
+    public abstract partial class Node : MonoBehaviour
     {
-        public virtual int Height { get; set; } = 1;
         public List<Node> Children { get; set; } = new List<Node>();
         public Node Parent { get; set; }
         public Node RootNode { get; set; }
@@ -47,9 +45,7 @@ namespace NodeComponents
         {
             var nodeScript = InstantiateSyntaxNode(node, rootNode);
 
-            nodeScript.Parent = this;
-            nodeScript.gameObject.transform.parent = transform;
-            nodeScript.gameObject.transform.localPosition = new Vector3(1, Height * -2, 0);
+            SetPosition(nodeScript);
 
             nodeScript.InitComponents();
 
@@ -63,34 +59,9 @@ namespace NodeComponents
             var displayName = DisplayString;
             name = GetType().ToString().Replace("SyntaxNodes.", "");
 
-            var text = gameObject.AddComponent<TextMesh>();
-            text.text = displayName;
-            var box = gameObject.AddComponent<BoxCollider>();
-
-            var textBounds = text.GetComponent<Renderer>().bounds;
-            box.size = textBounds.size;
+            InitVisualComponents(displayName);
 
             InitLine();
-        }
-
-        public virtual void InitLine()
-        {
-            if (Parent == null)
-                return;
-
-            var line = gameObject.AddComponent<LineRenderer>();
-            line.material = new Material(Shader.Find("Unlit/Texture"));
-            line.startColor = Color.grey;
-            line.endColor = Color.grey;
-            line.startWidth = 0.1f;
-            line.endWidth = 0.1f;
-            line.SetPositions(new[]
-            {
-                gameObject.transform.position,
-                Parent.transform.position + new Vector3(-0.25f, 0f, 0f)
-            });
-
-            Line = line;
         }
 
         // null root to make this a new root
@@ -116,8 +87,6 @@ namespace NodeComponents
                 nodeScript = (Node)newNode.AddComponent(type);
                 //var nodeScript = newNode.GetComponent<Node>();
 
-
-
                 var rigidBody = newNode.AddComponent<Rigidbody>();
                 rigidBody.isKinematic = true;
             }
@@ -126,14 +95,6 @@ namespace NodeComponents
             nodeScript.SyntaxNode = rosNode;
 
             return nodeScript;
-        }
-
-        public void UpdateLine()
-        {
-            if (Line != null)
-                Line.SetPositions(new[] {transform.position, Parent.transform.position});
-
-            foreach (var child in Children) child.UpdateLine();
         }
 
         public void ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode)
