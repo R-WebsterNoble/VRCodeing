@@ -26,7 +26,6 @@ namespace SyntaxNodes
             //GameObject textObject = (GameObject)Instantiate(Resources.Load("Clickable"));
             //textObject.transform.parent = transform;
             //textObject.GetComponent<Clickable>().Clicked += (sender, args) => { SetName(); };
-            base.InitLine();
         }
 
         private void AttachChildAp(object sender, Node other)

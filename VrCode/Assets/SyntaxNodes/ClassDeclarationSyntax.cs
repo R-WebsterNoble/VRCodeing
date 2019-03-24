@@ -18,7 +18,6 @@ namespace SyntaxNodes
 
             NameAp.GetComponent<AttachmentPoint>().Attached += AttachName;
             BodyAp.GetComponent<AttachmentPoint>().Attached += AttachBody;
-            base.InitLine();
         }
 
         private void AttachBody(object sender, Node bodyNode)

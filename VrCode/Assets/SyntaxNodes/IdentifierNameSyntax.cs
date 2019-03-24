@@ -22,7 +22,6 @@ namespace SyntaxNodes
 
             ////Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
 
-            base.InitLine();
         }
 
         public override void Attach(Node other)
