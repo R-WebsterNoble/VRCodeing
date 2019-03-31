@@ -51,7 +51,7 @@ public class CodeEditor
 
         var helloWorld = Parse(source, "", CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp5));
 
-
+        return helloWorld;
         var compilation =
             CSharpCompilation.Create("Test.dll", new[] {helloWorld}, DefaultReferences, DefaultCompilationOptions);
 

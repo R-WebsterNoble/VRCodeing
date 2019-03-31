@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Microsoft.CodeAnalysis.CSharp;
 using NodeComponents;
 
 public class RootNode : Node
@@ -23,27 +24,18 @@ class Hello
 {
     static void Main() 
     {
-        Console.WriteLine(""Hello World0!"");
-        Console.WriteLine(""Hello World1!"");
+        {}
+        {;}
+{}
+        //Console.WriteLine(""Hello World0!"");
+        //Console.WriteLine(""Hello World1!"");
     }
 }";
 
-        //var code = SyntaxFactory.ParseStatement("Class{}");
+        var code = CodeEditor.Parse(source).GetRoot();
 
-        var code = new CodeEditor().Gen(source).GetRoot();
+        //var code = new CodeEditor().Gen(source).GetRoot();
         RebuildTree(code);
-        //Children.Add(CreateTree(SyntaxNode, this));
-        //InstantiateNode(gameObject.transform, helloWorld.GetRoot());
-
-        //var memberAccessNode = (MemberAccessExpressionSyntax)helloWorld.GetRoot().ChildNodes().ElementAt(1)
-        //    .ChildNodes().ElementAt(1).ChildNodes().First().ChildNodes().ElementAt(2).ChildNodes().First()
-        //    .ChildNodes().First().ChildNodes().First();
-
-        //var node = _nodes[memberAccessNode].;
-        //_nodes.TryGetValue(node.Parent, out var ga);
-
-        //var syntaxNodeParent = ga.GetComponent<Node>().SyntaxNode.Parent;
-        //_nodes.TryGetValue(syntaxNodeParent, out var ga2);
     }
 
     public override void InitComponents()

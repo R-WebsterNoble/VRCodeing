@@ -45,7 +45,9 @@ namespace NodeComponents
             foreach (var childNode in nodes)
             {
                 var newChildNode = CreateTree(childNode, RootNode);
-                ChildAp.transform.Translate(0, -newChildNode.Height, 0);
+                var newAp = Instantiate(ChildAp.gameObject, transform);
+                ChildAp = newAp.transform;
+                newAp.transform.Translate(0, -newChildNode.Height, 0);
                 Height += newChildNode.Height;
                 Children.Add(newChildNode);
             }
