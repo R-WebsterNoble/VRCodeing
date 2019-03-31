@@ -76,8 +76,8 @@ namespace NodeComponents
             GameObject newNode;
             Node nodeScript;
 
-            var nodeName = rosNode.GetType().ToString()
-                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
+            //var nodeName = rosNode.GetType().ToString()
+            //    .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
 
             var nodePrefab = //Resources.Load("SyntaxNodePrefabs/" + nodeName)??
                              Resources.Load("DefaultNode");
@@ -124,6 +124,7 @@ namespace NodeComponents
                     Destroy(child.gameObject);
 
             Height = 1;
+            ChildAp.transform.position = Anchor.position;
             Children = new List<Node>();
             AttachChildren(newRootNode.ChildNodes());
         }
