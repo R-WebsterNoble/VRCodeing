@@ -9,7 +9,7 @@ namespace SyntaxNodes
     {
         public override string DisplayString => "using";
 
-        public GameObject ChildAp;
+        public new GameObject ChildAp;
         public GameObject BottomAp;
 
         public override void InitComponents()

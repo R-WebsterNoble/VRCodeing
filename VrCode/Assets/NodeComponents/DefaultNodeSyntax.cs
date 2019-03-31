@@ -14,8 +14,36 @@ namespace NodeComponents
 
         public override int Height { get; set; } = ThisNodeHeight;
 
+        private Vector3 _topInitialPosition;
+        private Vector3 _topInitialScale;
+        private Vector3 _middleInitialPosition;
+        private Vector3 _middleInitialScale;
+        private Vector3 _bottomInitialPosition;
+        private Vector3 _bottomInitialScale;
+
+
+        public override void InitComponents()
+        {
+            _topInitialPosition = TopRect.transform.localPosition;
+            _topInitialScale = TopRect.transform.localScale;
+            _middleInitialPosition = MiddleRect.transform.localPosition;
+            _middleInitialScale = MiddleRect.transform.localScale;
+            _bottomInitialPosition = BottomRect.transform.localPosition;
+            _bottomInitialScale = BottomRect.transform.localScale;
+
+            name = SyntaxNode.GetType().ToString()
+                       .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "") + " (Default)";
+        }
+
         public override void ChildrenAttached()
         {
+            TopRect.transform.localPosition = _topInitialPosition;
+            TopRect.transform.localScale = _topInitialScale;
+            MiddleRect.transform.localPosition = _middleInitialPosition;
+            MiddleRect.transform.localScale = _middleInitialScale;
+            BottomRect.transform.localPosition = _bottomInitialPosition;
+            BottomRect.transform.localScale = _bottomInitialScale;
+
             Text.text = DisplayString;
 
             var textBounds = Text.GetComponent<Renderer>().bounds;

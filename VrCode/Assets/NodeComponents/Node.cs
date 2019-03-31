@@ -20,8 +20,12 @@ namespace NodeComponents
 
         public Transform Anchor;
 
-        public virtual void SetPosition(Node parent)
+        private Vector3 _childApInitialPosition;
+
+        public void SetPosition(Node parent)
         {
+            _childApInitialPosition = ChildAp.localPosition;
+
             Parent = parent;
             gameObject.transform.parent = parent.transform;
 
@@ -33,7 +37,7 @@ namespace NodeComponents
             .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "")
             .Replace("Syntax", "");
 
-        public virtual void AttachChildren(IEnumerable<SyntaxNode> nodes)
+        public void AttachChildren(IEnumerable<SyntaxNode> nodes)
         {
             foreach (var childNode in nodes)
             {
@@ -50,7 +54,7 @@ namespace NodeComponents
         {
         }
 
-        public virtual Node CreateTree(SyntaxNode node, Node rootNode)
+        public Node CreateTree(SyntaxNode node, Node rootNode)
         {
             var nodeScript = InstantiateSyntaxNode(node, rootNode);
 
@@ -65,27 +69,22 @@ namespace NodeComponents
 
         public virtual void InitComponents()
         {
-            name = SyntaxNode.GetType().ToString()
-                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "") + " (Default)";
+            throw new NotImplementedException();
         }
-
 
         // rootNode: null root to make this a new root
         public static Node InstantiateSyntaxNode(SyntaxNode rosNode, [CanBeNull] Node rootNode)
         {
-            GameObject newNode;
-            Node nodeScript;
+            var nodeName = rosNode.GetType().ToString()
+                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
 
-            //var nodeName = rosNode.GetType().ToString()
-            //    .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
-
-            var nodePrefab = //Resources.Load("SyntaxNodePrefabs/" + nodeName)??
+            var nodePrefab = Resources.Load("SyntaxNodePrefabs/" + nodeName)??
                              Resources.Load("DefaultNode");
 
             //if(nodePrefab != null)
             //{
-            newNode = (GameObject)Instantiate(nodePrefab, rootNode?.transform);
-            nodeScript = newNode.GetComponent<Node>();
+            var newNode = (GameObject)Instantiate(nodePrefab, rootNode?.transform);
+            var nodeScript = newNode.GetComponent<Node>();
             //var syntaxNodeType = SyntaxNodeLookup.LookupType(rosNode);
             //nodeScript = (Node)newNode.AddComponent(syntaxNodeType);
             //}
@@ -124,7 +123,7 @@ namespace NodeComponents
                     Destroy(child.gameObject);
 
             Height = 1;
-            ChildAp.transform.position = Anchor.position;
+            ChildAp.transform.localPosition = _childApInitialPosition;
             Children = new List<Node>();
             AttachChildren(newRootNode.ChildNodes());
         }
@@ -151,6 +150,15 @@ namespace NodeComponents
                 RootNode = this;
                 Parent = null;
                 transform.parent = null;
+                SetNewRoot(this);
+                void SetNewRoot(Node node)
+                {
+                    foreach (var child in node.Children)
+                    {
+                        child.RootNode = this;
+                        SetNewRoot(child);
+                    }
+                }
             }
             catch (Exception e)
             {
