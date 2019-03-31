@@ -22,8 +22,11 @@ namespace NodeComponents
 
         private Vector3 _childApInitialPosition;
 
+        public virtual int ThisNodeHeight => 1;
+
         public void SetPosition(Node parent)
         {
+            Height = ThisNodeHeight;
             _childApInitialPosition = ChildAp.localPosition;
 
             Parent = parent;
@@ -122,7 +125,7 @@ namespace NodeComponents
                 if (child != null && child.gameObject != null)
                     Destroy(child.gameObject);
 
-            Height = 1;
+            Height = ThisNodeHeight;
             ChildAp.transform.localPosition = _childApInitialPosition;
             Children = new List<Node>();
             AttachChildren(newRootNode.ChildNodes());

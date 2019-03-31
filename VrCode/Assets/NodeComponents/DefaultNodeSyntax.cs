@@ -9,10 +9,10 @@ namespace NodeComponents
         public Transform BottomRect;
         public GameObject MiddleRect;
 
-        private const int ThisNodeHeight = 5;
+        public override int ThisNodeHeight => 5;
         private const float TextMargin = 0.5f;
 
-        public override int Height { get; set; } = ThisNodeHeight;
+        public override int Height { get; set; }
 
         private Vector3 _topInitialPosition;
         private Vector3 _topInitialScale;
