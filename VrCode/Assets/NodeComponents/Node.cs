@@ -66,7 +66,7 @@ namespace NodeComponents
         public virtual void InitComponents()
         {
             name = SyntaxNode.GetType().ToString()
-                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
+                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "") + " (Default)";
         }
 
 
