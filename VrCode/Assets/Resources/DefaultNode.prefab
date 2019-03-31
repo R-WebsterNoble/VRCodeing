@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c36167e4aa20241a4ec897ede91dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChildAp: {fileID: 5449129565992862512}
+  ChildAp: {fileID: 6478348390672952260}
   Anchor: {fileID: 5927041123686513332}
   TopRect: {fileID: 4473763047774822622}
   Text: {fileID: 8467930565123088686}
@@ -628,3 +628,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3625971701216915985}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6478348390672952260 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7761317909857556949, guid: 3376c280cdbc6094d8e1ed846978145d,
+    type: 3}
+  m_PrefabInstance: {fileID: 3625971701216915985}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96a9eee9c64d5c3409511dba3fc6ea8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

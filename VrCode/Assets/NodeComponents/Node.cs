@@ -14,7 +14,7 @@ namespace NodeComponents
 
         public SyntaxNode SyntaxNode { get; set; }
 
-        public Transform ChildAp;
+        public AttachmentPoint ChildAp;
 
         public virtual int Height { get; set; }
 
@@ -27,7 +27,7 @@ namespace NodeComponents
         public void SetPosition(Node parent)
         {
             Height = ThisNodeHeight;
-            _childApInitialPosition = ChildAp.localPosition;
+            _childApInitialPosition = ChildAp.transform.localPosition;
 
             Parent = parent;
             gameObject.transform.parent = parent.transform;
@@ -45,8 +45,11 @@ namespace NodeComponents
             foreach (var childNode in nodes)
             {
                 var newChildNode = CreateTree(childNode, RootNode);
-                var newAp = Instantiate(ChildAp.gameObject, transform);
-                ChildAp = newAp.transform;
+                var newAp = Instantiate(ChildAp, transform);
+                var attachmentPoint = newAp.GetComponent<AttachmentPoint>();
+                attachmentPoint.Child = newChildNode;
+                attachmentPoint.Attached += Attach;
+                ChildAp = newAp;
                 newAp.transform.Translate(0, -newChildNode.Height, 0);
                 Height += newChildNode.Height;
                 Children.Add(newChildNode);
@@ -133,17 +136,18 @@ namespace NodeComponents
             AttachChildren(newRootNode.ChildNodes());
         }
 
-        public virtual void Attach(Node other)
+        public virtual void Attach(object sender, (Node Other, Node Child) args)
         {
         }
 
-        //private void DeleteTree()
-        //{
-        //    foreach (var child in Children)
-        //    {
-        //        DeleteTree();
-        //    }
-        //}
+        public void DeleteTree()
+        {
+            foreach (var child in Children)
+            {
+                child.DeleteTree();
+            }
+            Destroy(gameObject);
+        }
 
         public void Detach()
         {

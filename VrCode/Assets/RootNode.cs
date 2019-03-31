@@ -26,9 +26,7 @@ class Hello
     {
         {}
         {;}
-{}
-        //Console.WriteLine(""Hello World0!"");
-        //Console.WriteLine(""Hello World1!"");
+        {;;}
     }
 }";
 

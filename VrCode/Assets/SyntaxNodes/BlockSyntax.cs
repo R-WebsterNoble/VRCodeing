@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using Microsoft.CodeAnalysis;
+using NodeComponents;
+using UnityEngine;
 
 namespace SyntaxNodes
 {
@@ -8,7 +11,6 @@ namespace SyntaxNodes
         public TextMesh Text;
         public Transform BottomRect;
         public GameObject MiddleRect;
-
 
         public override int ThisNodeHeight => 5;
         private const float TextMargin = 0.5f;
@@ -32,21 +34,12 @@ namespace SyntaxNodes
             _bottomInitialPosition = BottomRect.transform.localPosition;
             _bottomInitialScale = BottomRect.transform.localScale;
 
-            Height = ThisNodeHeight;
-
             name = SyntaxNode.GetType().ToString()
-                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
+                       .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
         }
 
         public override void ChildrenAttached()
         {
-            //TopRect.transform.localPosition = new Vector3(4.25f, -1f, 0f);
-            //TopRect.transform.localScale = new Vector3(8f, 1.5f, 1f);
-            //MiddleRect.transform.localPosition = new Vector3(0.5f, -3f, 0f);
-            //MiddleRect.transform.localScale = new Vector3(0.5f, 2.5f, 1f);
-            //BottomRect.transform.localPosition = new Vector3(4.25f, -4.5f, 0f);
-            //BottomRect.transform.localScale = new Vector3(8f, 0.5f, 1f);
-
             TopRect.transform.localPosition = _topInitialPosition;
             TopRect.transform.localScale = _topInitialScale;
             MiddleRect.transform.localPosition = _middleInitialPosition;
@@ -78,6 +71,18 @@ namespace SyntaxNodes
                 MiddleRect.transform.localScale.x,
                 MiddleRect.transform.localScale.y * (-1f + 2f * h),
                 MiddleRect.transform.localScale.z);
+        }
+
+        public override void Attach(object sender, (Node Other, Node Child) args)
+        {
+            var blockSyntax = (Microsoft.CodeAnalysis.CSharp.Syntax.BlockSyntax) SyntaxNode;
+            var childIndex = Children.IndexOf(args.Child);
+            Children.Insert(childIndex + 1, args.Other);
+            var statements = Children.Select(n=>(Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax)n.SyntaxNode);
+            var newBlock = blockSyntax.WithStatements(new SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax>(statements));
+            RootNode.ReplaceNode(SyntaxNode, newBlock);
+
+            args.Other.DeleteTree();
         }
     }
 }
