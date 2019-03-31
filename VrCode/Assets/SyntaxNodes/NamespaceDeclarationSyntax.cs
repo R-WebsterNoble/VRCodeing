@@ -1,9 +1,4 @@
-﻿using System;
-using Microsoft.CodeAnalysis.CSharp;
-using NodeComponents;
-using UnityEngine;
-
-namespace SyntaxNodes
+﻿namespace SyntaxNodes
 {
     public class NamespaceDeclarationSyntax : MemberDeclarationSyntax
     {

@@ -11,7 +11,8 @@ namespace SyntaxNodes
 
             if (other.SyntaxNode is Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax selectedUsing)
             {
-                var newNode = ((Microsoft.CodeAnalysis.CSharp.Syntax.CompilationUnitSyntax) SyntaxNode).AddUsings(selectedUsing);
+                var newNode =
+                    ((Microsoft.CodeAnalysis.CSharp.Syntax.CompilationUnitSyntax) SyntaxNode).AddUsings(selectedUsing);
                 RootNode.ReplaceNode(SyntaxNode, newNode);
 
                 //var line = gameObject.AddComponent<LineRenderer>();

@@ -35,7 +35,7 @@ namespace SyntaxNodes
             Height = ThisNodeHeight;
 
             name = SyntaxNode.GetType().ToString()
-                       .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
+                .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
         }
 
         public override void ChildrenAttached()
@@ -75,9 +75,9 @@ namespace SyntaxNodes
 
             var h = Height / ThisNodeHeight;
             MiddleRect.transform.localScale = new Vector3(
-                    MiddleRect.transform.localScale.x,
-                    MiddleRect.transform.localScale.y * (-1f + 2f * h),
-                    MiddleRect.transform.localScale.z);
+                MiddleRect.transform.localScale.x,
+                MiddleRect.transform.localScale.y * (-1f + 2f * h),
+                MiddleRect.transform.localScale.z);
         }
     }
 }

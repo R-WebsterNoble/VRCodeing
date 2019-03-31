@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.CodeAnalysis;
-using NodeComponents;
+﻿using NodeComponents;
 using UnityEngine;
 
 namespace SyntaxNodes
@@ -32,7 +30,8 @@ namespace SyntaxNodes
         {
             if (other.SyntaxNode is Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax selectedName)
             {
-                var newNode = ((Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax)SyntaxNode).WithName(selectedName);
+                var newNode =
+                    ((Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax) SyntaxNode).WithName(selectedName);
                 RootNode.ReplaceNode(SyntaxNode, newNode);
 
                 if (other.gameObject != null)
@@ -48,7 +47,8 @@ namespace SyntaxNodes
         {
             if (other.SyntaxNode is Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax selectedName)
             {
-                var newNode = ((Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax) SyntaxNode).WithName(selectedName);
+                var newNode =
+                    ((Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax) SyntaxNode).WithName(selectedName);
                 RootNode.ReplaceNode(SyntaxNode, newNode);
 
                 if (other.gameObject != null)

@@ -45,7 +45,7 @@ namespace NodeComponents
             foreach (var childNode in nodes)
             {
                 var newChildNode = CreateTree(childNode, RootNode);
-                ChildAp.transform.Translate(0, -newChildNode.Height,0);
+                ChildAp.transform.Translate(0, -newChildNode.Height, 0);
                 Height += newChildNode.Height;
                 Children.Add(newChildNode);
             }
@@ -81,12 +81,12 @@ namespace NodeComponents
             var nodeName = rosNode.GetType().ToString()
                 .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
 
-            var nodePrefab = Resources.Load("SyntaxNodePrefabs/" + nodeName)??
+            var nodePrefab = Resources.Load("SyntaxNodePrefabs/" + nodeName) ??
                              Resources.Load("DefaultNode");
 
             //if(nodePrefab != null)
             //{
-            var newNode = (GameObject)Instantiate(nodePrefab, rootNode?.transform);
+            var newNode = (GameObject) Instantiate(nodePrefab, rootNode?.transform);
             var nodeScript = newNode.GetComponent<Node>();
             //var syntaxNodeType = SyntaxNodeLookup.LookupType(rosNode);
             //nodeScript = (Node)newNode.AddComponent(syntaxNodeType);
@@ -154,6 +154,7 @@ namespace NodeComponents
                 Parent = null;
                 transform.parent = null;
                 SetNewRoot(this);
+
                 void SetNewRoot(Node node)
                 {
                     foreach (var child in node.Children)
@@ -185,8 +186,8 @@ namespace NodeComponents
             _screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 
             _offset = gameObject.transform.position -
-                     Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
-                         _screenPoint.z));
+                      Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
+                          _screenPoint.z));
 
             //var root = GameObject.FindGameObjectWithTag("GameController").GetComponent<RootNode>();
         }
@@ -216,7 +217,6 @@ namespace NodeComponents
             var target = _closestNode.gameObject.GetComponent<AttachmentPoint>();
             target.Attach(this);
         }
-
 
         private static readonly Collider[] SnapOntoNearbyTargets = new Collider[100];
 

@@ -21,7 +21,6 @@ namespace SyntaxNodes
             //thing.GetComponentInChildren<TextMesh>().text = ((Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax) SyntaxNode).ToString();
 
             ////Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
-
         }
 
         public override void Attach(Node other)

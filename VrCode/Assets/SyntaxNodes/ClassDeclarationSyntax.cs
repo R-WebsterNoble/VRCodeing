@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using NodeComponents;
+﻿using NodeComponents;
 using UnityEngine;
 
 namespace SyntaxNodes
@@ -9,7 +8,8 @@ namespace SyntaxNodes
         public GameObject NameAp;
         public GameObject BodyAp;
 
-        public override string DisplayString => "class " + ((Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax)SyntaxNode).Identifier.ValueText;
+        public override string DisplayString =>
+            "class " + ((Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax) SyntaxNode).Identifier.ValueText;
 
         public override void InitComponents()
         {
@@ -37,10 +37,12 @@ namespace SyntaxNodes
         private void AttachName(object sender, Node nameNode)
         {
             var identifier = nameNode.SyntaxNode as Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax;
-            if(identifier == null)
+            if (identifier == null)
                 return;
-            
-            var newNode = ((Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax) SyntaxNode).WithIdentifier(identifier.Identifier);
+
+            var newNode =
+                ((Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax) SyntaxNode).WithIdentifier(identifier
+                    .Identifier);
 
             RootNode.ReplaceNode(SyntaxNode, newNode);
 
