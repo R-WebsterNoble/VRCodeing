@@ -38,6 +38,8 @@ namespace SyntaxNodes
 
             name = SyntaxNode.GetType().ToString()
                        .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
+
+            ChildAp.Attached += Attach;
         }
 
         public override void ChildrenAttached()

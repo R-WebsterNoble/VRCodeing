@@ -45,21 +45,25 @@ namespace NodeComponents
             foreach (var childNode in nodes)
             {
                 var newChildNode = CreateTree(childNode, RootNode);
-                ChildAp.Child = newChildNode;
 
-                var newChildAp = Instantiate(Resources.Load<AttachmentPoint>("AttachmentPoint"), transform);
-                newChildAp.transform.localPosition = ChildAp.transform.localPosition;
-                var attachmentPoint = newChildAp.GetComponent<AttachmentPoint>();
-                attachmentPoint.Attached += Attach;
-                newChildAp.transform.Translate(0, -newChildNode.Height, 0);
-                ChildAp = newChildAp;
-
+                NewAttachmentPoint(newChildNode);
+                ChildAp.transform.Translate(0, -newChildNode.Height, 0);
 
                 Height += newChildNode.Height;
                 Children.Add(newChildNode);
             }
 
             ChildrenAttached();
+        }
+
+        private void NewAttachmentPoint(Node newChildNode)
+        {
+            var newChildAp = Instantiate(Resources.Load<AttachmentPoint>("AttachmentPoint"), transform);
+            newChildAp.transform.localPosition = ChildAp.transform.localPosition;
+
+            var attachmentPoint = newChildAp.GetComponent<AttachmentPoint>();
+            attachmentPoint.Attached += Attach;
+            attachmentPoint.Child = newChildNode;
         }
 
         public virtual void ChildrenAttached()
@@ -144,15 +148,6 @@ namespace NodeComponents
 
         public virtual void Attach(object sender, (Node Other, Node Child) args)
         {
-        }
-
-        public void DeleteTree()
-        {
-            foreach (var child in Children)
-            {
-                child.DeleteTree();
-            }
-            Destroy(gameObject);
         }
 
         public void Detach()
