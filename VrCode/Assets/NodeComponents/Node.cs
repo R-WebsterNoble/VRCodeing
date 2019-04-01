@@ -45,12 +45,16 @@ namespace NodeComponents
             foreach (var childNode in nodes)
             {
                 var newChildNode = CreateTree(childNode, RootNode);
-                var newAp = Instantiate(ChildAp, transform);
-                var attachmentPoint = newAp.GetComponent<AttachmentPoint>();
-                attachmentPoint.Child = newChildNode;
+                ChildAp.Child = newChildNode;
+
+                var newChildAp = Instantiate(Resources.Load<AttachmentPoint>("AttachmentPoint"), transform);
+                newChildAp.transform.localPosition = ChildAp.transform.localPosition;
+                var attachmentPoint = newChildAp.GetComponent<AttachmentPoint>();
                 attachmentPoint.Attached += Attach;
-                ChildAp = newAp;
-                newAp.transform.Translate(0, -newChildNode.Height, 0);
+                newChildAp.transform.Translate(0, -newChildNode.Height, 0);
+                ChildAp = newChildAp;
+
+
                 Height += newChildNode.Height;
                 Children.Add(newChildNode);
             }
@@ -69,6 +73,8 @@ namespace NodeComponents
             nodeScript.SetPosition(this);
 
             nodeScript.InitComponents();
+
+            ChildAp.Attached += Attach;
 
             nodeScript.AttachChildren(node.ChildNodes());
 

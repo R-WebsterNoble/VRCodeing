@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis;
 using NodeComponents;
 using UnityEngine;
 
+using Ros = Microsoft.CodeAnalysis.CSharp.Syntax;
+
 namespace SyntaxNodes
 {
     public class BlockSyntax : StatementSyntax
@@ -75,14 +77,22 @@ namespace SyntaxNodes
 
         public override void Attach(object sender, (Node Other, Node Child) args)
         {
-            var blockSyntax = (Microsoft.CodeAnalysis.CSharp.Syntax.BlockSyntax) SyntaxNode;
-            var childIndex = Children.IndexOf(args.Child);
-            Children.Insert(childIndex + 1, args.Other);
-            var statements = Children.Select(n=>(Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax)n.SyntaxNode);
-            var newBlock = blockSyntax.WithStatements(new SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax>(statements));
+            var blockSyntax = (Ros.BlockSyntax) SyntaxNode;
+            if (args.Child != null)
+            {
+                var childIndex = Children.IndexOf(args.Child);
+                Children.Insert(childIndex, args.Other);
+            }
+            else
+            {
+                Children.Add(args.Other);
+            }
+
+            var statements = Children.Select(n=>(Ros.StatementSyntax)n.SyntaxNode);
+            var newBlock = blockSyntax.WithStatements(new SyntaxList<Ros.StatementSyntax>(statements));
             RootNode.ReplaceNode(SyntaxNode, newBlock);
 
-            args.Other.DeleteTree();
+            Destroy(args.Other.gameObject);
         }
     }
 }
