@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using UnityEngine;
@@ -59,6 +60,7 @@ namespace NodeComponents
         private void NewAttachmentPoint(Node newChildNode)
         {
             var newChildAp = Instantiate(Resources.Load<AttachmentPoint>("AttachmentPoint"), transform);
+            newChildAp.tag = "ClonedAP";
             newChildAp.transform.localPosition = ChildAp.transform.localPosition;
 
             var attachmentPoint = newChildAp.GetComponent<AttachmentPoint>();
@@ -139,6 +141,11 @@ namespace NodeComponents
             foreach (var child in Children)
                 if (child != null && child.gameObject != null)
                     Destroy(child.gameObject);
+
+            foreach (var ap in GetComponentsInChildren<AttachmentPoint>().Where(ap => ap.tag == "ClonedAP"))
+            {
+                Destroy(ap.gameObject);
+            }
 
             Height = ThisNodeHeight;
             ChildAp.transform.localPosition = _childApInitialPosition;
