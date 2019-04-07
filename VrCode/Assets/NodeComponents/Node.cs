@@ -150,6 +150,11 @@ namespace NodeComponents
             AttachChildren(newRootNode.ChildNodes());
         }
 
+        public virtual SyntaxNode TryAttach(Node targetNode, AttachmentPoint targetAp)
+        {
+            return null;
+        }
+
         public virtual void Attach(Node other, AttachmentPoint ap)
         {
         }
@@ -274,10 +279,16 @@ namespace NodeComponents
 
             if (newClosestNode != null)
             {
-                if (_closestNode != null)
-                    _closestNode.GetComponent<Renderer>().material.color = Color.white;
+                if (newClosestNode != _closestNode)
+                {
+                    if (_closestNode != null)
+                        _closestNode.GetComponent<Renderer>().material.color = Color.white;
 
-                newClosestNode.GetComponent<Renderer>().material.color = Color.green;
+                    var targetAp = newClosestNode.gameObject.GetComponent<AttachmentPoint>();
+                    var targetNode = newClosestNode.gameObject.GetComponentInParent<Node>();
+                    if(newClosestNode.gameObject.GetComponentInParent<Node>().TryAttach(targetNode, targetAp) != null)
+                        newClosestNode.GetComponent<Renderer>().material.color = Color.green;
+                }
             }
             else
             {

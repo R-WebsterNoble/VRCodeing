@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using NodeComponents;
 using UnityEngine;
@@ -75,9 +76,27 @@ namespace SyntaxNodes
                 MiddleRect.transform.localScale.z);
         }
 
+        public override SyntaxNode TryAttach(Node other, AttachmentPoint ap)
+        {
+            if (!(SyntaxNode is Ros.BlockSyntax blockSyntax))
+                return null;
+
+            var statements = Children.Select(n => (Ros.StatementSyntax)n.SyntaxNode);
+            Ros.BlockSyntax newBlock = null;
+            try
+            {
+                newBlock = blockSyntax.WithStatements(new SyntaxList<Ros.StatementSyntax>(statements));
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return newBlock;
+        }
+
         public override void Attach(Node other, AttachmentPoint ap)
         {
-            var blockSyntax = (Ros.BlockSyntax) SyntaxNode;
             if (ap.Child != null)
             {
                 var childIndex = Children.IndexOf(ap.Child);
@@ -87,9 +106,7 @@ namespace SyntaxNodes
             {
                 Children.Add(other);
             }
-
-            var statements = Children.Select(n=>(Ros.StatementSyntax)n.SyntaxNode);
-            var newBlock = blockSyntax.WithStatements(new SyntaxList<Ros.StatementSyntax>(statements));
+            var newBlock = TryAttach(other, ap);
             RootNode.ReplaceNode(SyntaxNode, newBlock);
 
             Destroy(other.gameObject);
