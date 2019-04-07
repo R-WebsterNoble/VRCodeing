@@ -5,11 +5,10 @@ namespace SyntaxNodes
 {
     public class CompilationUnitSyntax : CSharpSyntaxNode
     {
-        public override void Attach(object sender, (Node Other, Node Child) args)
+        public override void Attach(Node other, AttachmentPoint ap)
         {
             Debug.Log("clicked");
 
-            var other = args.Other;
             if (other.SyntaxNode is Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax selectedUsing)
             {
                 var newNode =

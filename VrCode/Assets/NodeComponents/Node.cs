@@ -64,7 +64,6 @@ namespace NodeComponents
             newChildAp.transform.localPosition = ChildAp.transform.localPosition;
 
             var attachmentPoint = newChildAp.GetComponent<AttachmentPoint>();
-            attachmentPoint.Attached += Attach;
             attachmentPoint.Child = newChildNode;
         }
 
@@ -79,8 +78,6 @@ namespace NodeComponents
             nodeScript.SetPosition(this);
 
             nodeScript.InitComponents();
-
-            ChildAp.Attached += Attach;
 
             nodeScript.AttachChildren(node.ChildNodes());
 
@@ -153,7 +150,7 @@ namespace NodeComponents
             AttachChildren(newRootNode.ChildNodes());
         }
 
-        public virtual void Attach(object sender, (Node Other, Node Child) args)
+        public virtual void Attach(Node other, AttachmentPoint ap)
         {
         }
 
@@ -228,8 +225,10 @@ namespace NodeComponents
             if (_closestNode == null)
                 return;
 
-            var target = _closestNode.gameObject.GetComponent<AttachmentPoint>();
-            target.Attach(this);
+            var targetAp = _closestNode.gameObject.GetComponent<AttachmentPoint>();
+            var targetNode = _closestNode.gameObject.GetComponentInParent<Node>();
+
+            targetNode.Attach(this, targetAp);
         }
 
         private static readonly Collider[] SnapOntoNearbyTargets = new Collider[100];

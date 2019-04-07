@@ -38,8 +38,6 @@ namespace SyntaxNodes
 
             name = SyntaxNode.GetType().ToString()
                        .Replace("Microsoft.CodeAnalysis.CSharp.Syntax.", "");
-
-            ChildAp.Attached += Attach;
         }
 
         public override void ChildrenAttached()
@@ -77,24 +75,24 @@ namespace SyntaxNodes
                 MiddleRect.transform.localScale.z);
         }
 
-        public override void Attach(object sender, (Node Other, Node Child) args)
+        public override void Attach(Node other, AttachmentPoint ap)
         {
             var blockSyntax = (Ros.BlockSyntax) SyntaxNode;
-            if (args.Child != null)
+            if (ap.Child != null)
             {
-                var childIndex = Children.IndexOf(args.Child);
-                Children.Insert(childIndex, args.Other);
+                var childIndex = Children.IndexOf(ap.Child);
+                Children.Insert(childIndex, other);
             }
             else
             {
-                Children.Add(args.Other);
+                Children.Add(other);
             }
 
             var statements = Children.Select(n=>(Ros.StatementSyntax)n.SyntaxNode);
             var newBlock = blockSyntax.WithStatements(new SyntaxList<Ros.StatementSyntax>(statements));
             RootNode.ReplaceNode(SyntaxNode, newBlock);
 
-            Destroy(args.Other.gameObject);
+            Destroy(other.gameObject);
         }
     }
 }

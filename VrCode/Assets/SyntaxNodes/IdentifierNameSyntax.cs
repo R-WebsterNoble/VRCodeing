@@ -23,11 +23,10 @@ namespace SyntaxNodes
             ////Draggable.Anchor = thing.gameObject.GetComponentInParent<Anchor>()?.AnchorObj;
         }
 
-        public override void Attach(object sender, (Node Other, Node Child) args)
+        public override void Attach(Node other, AttachmentPoint ap)
         {
             Debug.Log("clicked");
 
-            var other = args.Other;
             if (other.SyntaxNode is Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax)
             {
                 try
