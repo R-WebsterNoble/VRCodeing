@@ -233,6 +233,8 @@ namespace NodeComponents
                 return;
             }
 
+            _closestNode.GetComponent<Renderer>().material.color = Color.white;
+
             var targetAp = _closestNode.gameObject.GetComponent<AttachmentPoint>();
             var targetNode = _closestNode.gameObject.GetComponentInParent<Node>();
 
@@ -251,6 +253,7 @@ namespace NodeComponents
                 QueryTriggerInteraction.Ignore);
 
             var closestTargetDist = float.PositiveInfinity;
+            GameObject newClosestNode = null;
             for (var index = 0; index < objCount; index++)
             {
                 var target = SnapOntoNearbyTargets[index];
@@ -265,12 +268,25 @@ namespace NodeComponents
                 if (distToTarget < closestTargetDist)
                 {
                     closestTargetDist = distToTarget;
-                    _closestNode = target.gameObject;
+                    newClosestNode = target.gameObject;
                 }
             }
 
-            if (float.IsPositiveInfinity(closestTargetDist))
-                _closestNode = null; //Nothing found. Clear out previous results
+            if (newClosestNode != null)
+            {
+                if (_closestNode != null)
+                    _closestNode.GetComponent<Renderer>().material.color = Color.white;
+
+                newClosestNode.GetComponent<Renderer>().material.color = Color.green;
+            }
+            else
+            {
+                //Nothing found. Clear out previous results
+                if (_closestNode != null)
+                    _closestNode.GetComponent<Renderer>().material.color = Color.white;
+                _closestNode = null;
+            }
+            _closestNode = newClosestNode;
         }
     }
 }
