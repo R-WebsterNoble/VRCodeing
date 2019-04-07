@@ -224,7 +224,14 @@ namespace NodeComponents
         public void OnMouseUp()
         {
             if (_closestNode == null)
+            {
+                if (RootNode != this)
+                {
+                    // Reset node position if not attached or detached
+                    gameObject.transform.position = _startPos;
+                }
                 return;
+            }
 
             var targetAp = _closestNode.gameObject.GetComponent<AttachmentPoint>();
             var targetNode = _closestNode.gameObject.GetComponentInParent<Node>();
