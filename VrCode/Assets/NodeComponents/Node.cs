@@ -158,22 +158,23 @@ namespace NodeComponents
         {
             try
             {
-                var newRootNode = RootNode.SyntaxNode.RemoveNode(SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+                var oldRootNode = RootNode;
+                var newRootRosNode = RootNode.SyntaxNode.RemoveNode(SyntaxNode, SyntaxRemoveOptions.KeepExteriorTrivia);
+                
                 Parent.Children.Remove(this);
-                RootNode.RebuildTree(newRootNode);
                 RootNode = this;
                 Parent = null;
                 transform.parent = null;
-                SetNewRoot(this);
-
-                void SetNewRoot(Node node)
+                SetNewRootInAllChildren(this);
+                void SetNewRootInAllChildren(Node node)
                 {
                     foreach (var child in node.Children)
                     {
                         child.RootNode = this;
-                        SetNewRoot(child);
+                        SetNewRootInAllChildren(child);
                     }
                 }
+                oldRootNode.RebuildTree(newRootRosNode);
             }
             catch (Exception e)
             {
