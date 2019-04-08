@@ -60,6 +60,11 @@ namespace NodeComponents
         private void NewAttachmentPoint(Node newChildNode)
         {
             var newChildAp = Instantiate(Resources.Load<AttachmentPoint>("AttachmentPoint"), transform);
+
+            var sendMouseEventsTo = newChildAp.GetComponent<SendMouseEventsTo>();
+            //if (sendMouseEventsTo != null)
+                sendMouseEventsTo.Node = this;
+
             newChildAp.tag = "ClonedAP";
             newChildAp.transform.localPosition = ChildAp.transform.localPosition;
 
@@ -215,9 +220,10 @@ namespace NodeComponents
             var curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);
 
             var curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + _offset;
-
             var movement = curPosition - transform.position;
-            foreach (var rb in GetComponentsInChildren<Rigidbody>()) rb.MovePosition(rb.transform.position + movement);
+
+            var rb = GetComponent<Rigidbody>();
+            rb.MovePosition(rb.transform.position + movement);
 
             if (RootNode != this && (_startPos - transform.position).sqrMagnitude > DetachSqrDist)
                 Detach();
